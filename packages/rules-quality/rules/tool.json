@@ -1,0 +1,89 @@
+{
+    "number": "16",
+    "title": "Tooling",
+    "prefixes": [
+        "TOOL"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nAlle commando's draaien in de module-map, tenzij anders vermeld.\n\n| Commando | Wat | Config |\n|---|---|---|\n| `composer lint` | Syntax van alle PHP-bestanden (php-parallel-lint) | — |\n| `composer cs` / `composer cs-fix` | PrestaShop coding standard (php-cs-fixer + `prestashop/php-dev-tools`) | `.php-cs-fixer.dist.php` |\n| `composer phpstan` | PHPStan level 6 tegen elke PS-versie uit `tests/phpstan/config.json` | `tests/phpstan/phpstan.neon` |\n| `composer compat` | PHPCompatibility: werkt de code op `php_min` en nieuwer? | `phpcs.xml.dist` |\n| `composer test` | Unit-tests (geen PrestaShop nodig) | `phpunit.xml.dist` |\n| `composer conventions` | Docblocks overal + schone hoofdklasse (DOC-01, MOD-01) | — |\n| `composer check` | Alles hierboven + unit-tests, met stempel voor de definition of done | — |\n| `composer verify` | De volledige definition of done (alles hieronder), stopt bij de eerste fout | — |\n| `composer header-stamp` | Licentieheaders zetten/verversen | `.license-header.txt` |\n| `vendor/bin/ps-module validate` | Lokale validatorcheck op de bron (regels live van validator.prestashop.com) | fallback in build-tools |\n| `vendor/bin/ps-module build` | `../dist/<module>.zip`: no-dev vendor, gescopete packages, dev-bestanden eruit, `index.php` overal | `extra.prestashopheaven` in composer.json |\n| `vendor/bin/ps-module assets build` / `check` | Eigen JS (TST-20..29) en recept `typescript`: npm ci + typecheck, lint, tests met 100 % dekking, bundel `_dev/` → `views/js/`; check = alles hoort bij de laatste geslaagde run (zonder Node) | `_dev/package.json`, `_dev/build.mjs`, `_dev/vitest.config.mjs` |\n| `vendor/bin/ps-module validate-zip` | Dezelfde check op de echte zip, inclusief `vendor/` | — |\n| `vendor/bin/ps-module validator-api` | Stuurt de zip naar de online validator (een tijdelijke kopie zonder `docs/*.pdf`: max. 30 MB) | API-sleutel in `.env` |\n| `vendor/bin/ps-module shops run` | Tests op PrestaShop-winkels in Docker (zie TEST) | `testing.json` |\n| `vendor/bin/ps-module publish <cmd>` | Release-checklist (REL-08): `status`, `site`, `docs` (SFTP), `demo` (SSH), `shop` (webservice, inactief product), `vps-snapshot`, `done addons\\|shop` | `DOCS_SITE_*`, `DEMO_SITE_*`, `TRANSIP_*`, `SALES_SHOP_*` in `.env` |\n| `ps-module demo-site <cmd>` | De demowinkel zelf (DEMO): `setup`, `config`, `status`, `snapshot`, `restore`, `test`, `nightly`, `demo-mode`, `push`, `vps-snapshot`; ook buiten een module, `--env=<bestand>` | `DEMO_SITE_*` |\n| `vendor/bin/ps-module status` | Welke stappen op de huidige code geslaagd zijn | — |\n"
+        },
+        {
+            "type": "rule",
+            "id": "TOOL-01",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TOOL-01** Pas de regels van een tool nooit aan om een fout weg te werken. Geen\n  `@phpstan-ignore` of baseline zonder een comment met de reden én akkoord van de gebruiker."
+        },
+        {
+            "type": "rule",
+            "id": "TOOL-02",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TOOL-02** PHPStan heeft een echte PrestaShop nodig (`_PS_ROOT_DIR_`). Lokaal komen die uit de\n  cache van de skill (`scripts/fetch-prestashop.php <versie>`), in CI uit de officiële Docker-image."
+        },
+        {
+            "type": "rule",
+            "id": "TOOL-03",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TOOL-03** Composer draait met `config.platform.php` = `php_min`, zodat de dependencies\n  op de laagste ondersteunde PHP-versie werken, ook als je lokaal een nieuwere PHP hebt."
+        },
+        {
+            "type": "rule",
+            "id": "TOOL-05",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TOOL-05** Elke geslaagde check legt een stempel vast in `<repo>/.cache/dod/` met een\n  vingerafdruk van de broncode. `vendor/bin/ps-module status` toont wat op de\n  huidige code geslaagd is. De Stop-hook van het project gebruikt dit om de definition of done\n  af te dwingen. Een check die niet kan draaien: `vendor/bin/ps-module skip <step> \"<reden>\"`,\n  nooit stilzwijgend overslaan."
+        },
+        {
+            "type": "rule",
+            "id": "TOOL-04",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TOOL-04** De API-sleutel van de validator staat in `C:/_GIT/_PrestaShopHeaven/MODULES/.env`\n  (`PRESTASHOP_VALIDATOR_API_KEY`) of in een `.env` van de repo. In CI is het de secret\n  `PRESTASHOP_VALIDATOR_API_KEY`. Nooit committen."
+        },
+        {
+            "type": "rule",
+            "id": "TOOL-06",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TOOL-06** `composer lint` draait in CI op `php_min` én de hoogste ondersteunde PHP (8.5)."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

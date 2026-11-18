@@ -1,0 +1,277 @@
+{
+    "number": "12",
+    "title": "Compatibiliteit PS 8/9",
+    "prefixes": [
+        "CMP"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "CMP-01",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-01** Gebruik alleen API's die in alle versies van `ps_min` tot en met de nieuwste 9.x\n  bestaan. Bij twijfel: zoek de klasse of methode op in de PrestaShop-bron van beide versies."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-02",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-02** Symfony: PS 8 draait Symfony 4.4, PS 9 Symfony 6.4. Gebruik constructor\n  injection in plaats van `$this->get()`. Gebruik geen PHP-attributen van PrestaShop of Symfony\n  die in PS 8 niet bestaan (`#[AdminSecurity]`, `#[AsCommand]`, `#[AsCommandHandler]`) zolang\n  `ps_min` < 9. PHPStan tegen PS 8 vangt dat af."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-05",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-05** Weg in PS 9, dus nooit gebruiken: `ajaxDie()`, `Tools::displayPrice()`,\n  `Tools::displayNumber()`, `Tab::getClassName()`, Guzzle uit de core, Tactician-commandbus,\n  swiftmailer, de oude productpagina-hooks (`actionAdminProductsController*`), `PS_LEGACY_IMAGES`,\n  `PS_HIGHT_DPI`, `PrestaShopAutoload`, Sensio-annotaties behalve `@AdminSecurity` (BO-03).\n  `Product::$ean13` heet in PS 9 `gtin`: lees beide als `ps_min` < 9."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-07",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-07** Gebruik in de module `$this->context`, en in controllers `$this->context` /\n  `Context::getContext()` alleen waar nodig: de validator geeft voor PS 9 een waarschuwing\n  \"Use of class Context\" (context-refactor). In Symfony-code: de context-services van PS 9 via een\n  abstractie."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-06",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-06** Versie-specifieke servicebestanden (`services-9.yml`) bestaan pas vanaf PS 9.2.0;\n  gebruik ze niet om PS 8 en 9 te scheiden."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-03",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-03** Gebruik geen klassen die in PS 9 zijn verwijderd of als deprecated zijn gemarkeerd,\n  als er een alternatief bestaat dat in beide versies werkt."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-04",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-04** Het minimum in `composer.json` (`\"php\": \">=<php_min>\"`), `phpstan.neon`\n  (`phpVersion`), `phpcs.xml.dist` (`testVersion`) en `ps_versions_compliancy` komen overeen\n  met het interview."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-08",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-08** De nieuwste PrestaShop-versie wordt altijd ondersteund (Addons weigert updates zonder).\n  Komt er een nieuwe minor uit, dan draaien we binnen 6 maanden de winkeltests op die versie en\n  brengen we een release uit; `testing.json` bevat altijd de nieuwste versie."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-09",
+            "marker": "V",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **CMP-09 [V]** Geen themanaam in code of templates (`'classic'`, `'hummingbird'`,\n  `themes/classic/…`). Thema van de winkel: `$this->context->shop->theme->getName()`. Geen\n  `displaySearch` (weg in Hummingbird); orderdetail via de hook `displayOrderDetail`."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-10",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-10** Wijzig of include nooit bestanden of objecten van andere modules en lees hun tabellen\n  niet als API. Integratie alleen via hooks (ook eigen hooks `action<Module><Iets>`, geregistreerd in\n  `ModuleDefinition::HOOKS`) of hun publieke services."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-11",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **CMP-11** Een module voor `addons` of `own-clients` levert geen `override/` (recept `override`\n  alleen voor `internal`) en werkt ook met \"Overrides uitschakelen = Ja\". Hij hangt niet af van\n  overrides van andere modules: twee overrides van dezelfde methode kunnen niet samen installeren."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-12",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-12** Herken pagina's met `$this->context->controller->php_self` (checkout:\n  `php_self === 'order'` of `page_name === 'checkout'`), nooit met `instanceof OrderController`,\n  `get_class()` of de controllernaam: checkout-modules draaien een eigen `ModuleFrontController`."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-13",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-13** Geef in `displayOverrideTemplate` en `overrideLayoutTemplate` alleen een pad terug als\n  het verzoek echt van de module is, anders `null`: de core plakt de antwoorden van alle modules aan\n  elkaar tot één (ongeldig) pad."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-14",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-14** Bouw elke URL met `Link` (`getModuleLink`, `getPageLink`, `getProductLink`, …), nooit\n  met de hand: SEO-modules veranderen Dispatcher en Link. Routes in `moduleRoutes` hebben een uniek\n  patroon dat met de modulenaam begint."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-15",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-15** Betalen alleen via `paymentOptions` (`PaymentOption`), verzenden via\n  `displayCarrierExtraContent`/`actionCarrierProcess`/`actionValidateStepComplete`. Verberg,\n  herorden of wijzig nooit betaal- of verzendopties van andere modules, en raak\n  `#payment-confirmation`, `.js-payment-binary` en de voorwaarden-checkbox niet aan. Zelf-submittende\n  betaalknoppen roepen op PS ≥ 9.2 eerst `window.ps_onepagecheckout.submitBeforePayment()` aan als\n  die bestaat."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-16",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-16** Ga nooit uit van aanwezige of actieve standaardmodules (ps_shoppingcart, blockwishlist,\n  ps_searchbar, ps_mainmenu, ps_customtext): Warehouse en Hummingbird schakelen er een aantal uit.\n  Integratie is optioneel (`Module::isEnabled('<naam>')`), de eigen functie werkt zonder."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-17",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-17** Symfony: definieer nooit een core-service-id opnieuw; decoreer met `decorates:` en roep\n  altijd `.inner` aan; andere modules decoreren dezelfde service. Geen Twig-overrides van\n  core-admin-templates (`views/PrestaShop/Admin/…`): die zijn exclusief. Gebruik hooks en\n  form-/grid-modifier-hooks."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-18",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-18** Display-output is ook als widget bruikbaar (`WidgetInterface`, recept `display-hook`),\n  zodat pagebuilders (Creative Elements, Element Flow, iqitelementor) hem kunnen plaatsen."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-19",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-19** Geen per-bezoeker-data (klantnaam, cart, groepsprijzen, `user_id`, CSRF-tokens, \"recent\n  bekeken\") in de HTML van display-hooks of in `Media::addJsDef()`: page-cache-modules (JPresta,\n  LiteSpeed, ETS) en de Smarty-cache delen die HTML. Haal zulke data na het laden op via een\n  `ModuleFrontController` (AJAX, `Cache-Control: no-store`)."
+        },
+        {
+            "type": "rule",
+            "id": "CMP-20",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CMP-20** Verandert data die in FO-output zit, purge dan de page caches (harmless als ze\n  ontbreken): `Hook::exec('actionJPrestaClearCache', ['controller' => …, 'id' => …,\n  'delete_linking_pages' => true, 'action_origin' => '<module>'])` en\n  `Hook::exec('litespeedCachePurge', ['from' => '<module>', 'public' => [<tags>]])`. Een pagina die\n  niet gecachet mag worden: `Hook::exec('litespeedNotCacheable', ['reason' => …, 'from' => '<module>'])`."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

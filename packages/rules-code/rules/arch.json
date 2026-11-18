@@ -1,0 +1,212 @@
+{
+    "number": "23",
+    "title": "Architectuur: Domain-Driven Design en CQRS",
+    "prefixes": [
+        "ARCH"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nBindend voor elke module, ook een kleine. Uitleg, code en de PS 8/9-details: `architecture.md`. De [T]-regels\ncontroleert `ps-module conventions` (in `composer check` en de definition of done).\n"
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-01",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **ARCH-01 [T]** `src/` kent alleen de lagen: `Domain/`, `Application/`, `Infrastructure/` (plus de\n  persistence-modellen `Entity/` en `Model/`, en `Install/`), en de presentatie: `Module/`, `Controller/`,\n  `Form/`, `Grid/`, `Presenter/`, `Console/`, `Webservice/`, `ApiPlatform/`. Ook presentatie: `controllers/`,\n  `classes/` en het hoofdbestand. Andere mappen in `src/` zijn fout."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-02",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **ARCH-02 [T]** Domain en Application zijn ingedeeld in bounded contexts (`Domain/<Context>/`,\n  `Application/<Context>/`, PascalCase, een naam uit het vak; gedeeld: `Domain/Shared/`). Submappen van Domain:\n  `Model`, `ValueObject`, `Exception`, `Repository`, `Service`, `Event`, `Specification`; van Application:\n  `Command`, `Query`, `Port`, `Service`."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-03",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **ARCH-03 [T]** Domain is puur PHP: alleen eigen `Domain`-klassen en PHP built-ins. Geen PrestaShop-klassen,\n  -functies of -constanten (`\\Configuration`, `\\Db`, `\\Context`, `\\Tools`, ObjectModel, `pSQL`, `_DB_PREFIX_`),\n  geen `PrestaShop\\`, Symfony, Doctrine, Psr of andere lagen. Wel: `runtime-shared-kernel`\n  (`PrestaShopHeaven\\Runtime\\SharedKernel\\`, puur PHP; PKG-09)."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-04",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **ARCH-04 [T]** Application gebruikt alleen Domain, Application, `Psr\\` (bijv. `Psr\\Clock\\ClockInterface` voor de\n  klok, runtime-clock), `runtime-shared-kernel` en PHP built-ins. Alles van buiten gaat\n  via een interface: een repository-interface in `Domain/<Context>/Repository/` (domeindata) of een poort in\n  `Application/<Context>/Port/` (valuta, winkelwagen, cache, mail, externe API, klok), geïmplementeerd in\n  Infrastructure."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-05",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **ARCH-05 [T]** CQRS: elke wijziging is een command (`Application/<Context>/Command/<Naam>/<Naam>Command` +\n  `<Naam>Handler`, optioneel `<Naam>Result` met alleen het nieuwe id of een kleine uitkomst; anders `void`),\n  elke leesactie een query (`Query/<Naam>/<Naam>Query` + `<Naam>Handler` + `<Naam>Result`, een read model met\n  platte waarden, nooit een entity of ObjectModel). Een query-handler heeft geen bijwerkingen."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-06",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **ARCH-06 [T]** Commands, queries en results zijn `final` en immutable (`readonly` properties, geen setters).\n  Een command of query zet zijn invoer in de constructor om naar value objects en valideert zo; ongeldige invoer\n  geeft een domain exception."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-07",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **ARCH-07 [T]** Een handler is `final`, heeft naast de constructor precies één publieke methode\n  `handle(<Naam>Command|Query $x)` met dat exacte type, krijgt zijn afhankelijkheden via de constructor op\n  interfaces, en staat in `config/common.yml` met de tag `<vendor>.<module>.handler` en\n  `command: '<FQCN van de command/query>'`."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-08",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **ARCH-08 [T]** Eén bus: `PrestaShopHeaven\\Runtime\\Cqrs\\ModuleCommandBus` uit `runtime-cqrs` (de core-bus bestaat\n  niet in de front-container van PS 8/9), in `config/common.yml` als service `prestashopheaven.<module>.command_bus`\n  (PKG-11). Symfony-code krijgt hem via constructor injection (`'@prestashopheaven.<module>.command_bus'`); hooks,\n  widgets en legacy controllers via `getCommandBus()` (trait `ModuleServices` van runtime-cqrs)."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-09",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **ARCH-09 [T]** De presentatie (hooks, widgets, controllers, formulieren, console, webservice) is dun: invoer\n  lezen → command/query dispatchen → resultaat tonen of vertalen. Geen `\\Db`, `\\DbQuery`, geen `\\Configuration`\n  voor module-instellingen (lezen of schrijven), geen repositories, domain-models of -services, poorten, handlers,\n  `Entity`/`Model` of Infrastructure behalve de bus en `ShopConstraintMapper`. Uitzondering: grid-query-builders in\n  `src/Grid/Query/` lezen direct (read model van de grid, alleen lezen)."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-10",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **ARCH-10 [T]** Infrastructure kent de presentatie niet. Repositories mappen tussen de opslag (Configuration,\n  `\\Db`, ObjectModel in `src/Model/`, Doctrine in `src/Entity/`) en domeinobjecten en geven nooit ObjectModels of\n  entities door aan Application."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-11",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **ARCH-11** De regels van het vak (berekeningen, validatie, toegestane overgangen) staan in Domain: value objects,\n  entities en domain services. Een handler orkestreert alleen: laden → domein → opslaan → poorten."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-12",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **ARCH-12** Exceptions: `Domain/<Context>/Exception/<Context>Exception extends \\DomainException`, met specifieke\n  subklassen (`…NotFoundException`, `…ConstraintException` met codeconstanten). Engelse, onvertaalde berichten;\n  de presentatie vangt ze en toont een vertaalde melding per klasse/code, nooit het ruwe bericht aan een bezoeker."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-13",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **ARCH-13** Multistore: commands en queries voor winkelgebonden data krijgen\n  `PrestaShopHeaven\\Runtime\\SharedKernel\\ShopConstraint` (runtime-shared-kernel); Infrastructure zet hem om met\n  `ShopConstraintMapper` (runtime-multistore).\n  Data van een object (order, cart) gebruikt de winkel van dat object (MS-04)."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-14",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **ARCH-14 [T]** Tests volgens TST-04..12: elke klasse en methode getest (ook elke handler, met mocks van de\n  interfaces), Domain/Application/Presenter met 100 % regeldekking, en elke command/query via de bus in een\n  integratietest tegen een echte winkel."
+        },
+        {
+            "type": "rule",
+            "id": "ARCH-15",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **ARCH-15** Bijwerkingen na een command (cache legen, mail, webhook) gaan via een poort die de handler na het\n  opslaan aanroept, of via domain events die de handler na het opslaan doorgeeft aan een event-poort. Een\n  PrestaShop-hook die moet reageren, dispatcht een command."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

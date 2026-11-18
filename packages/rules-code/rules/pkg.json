@@ -1,0 +1,303 @@
+{
+    "number": "18",
+    "title": "Gedeelde packages",
+    "prefixes": [
+        "PKG"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nPlan, monorepo's, indexen en beslissingen: `docs/packages/` in de werkruimte. Vervangt de oude LIB-regels (module-kit en\nmodule-dev-tools als losse repo's); modules op module-kit 1.x / module-dev-tools 1.x gaan pas over bij hun volgende\nupdate (PKG-15).\n"
+        },
+        {
+            "type": "rule",
+            "id": "PKG-01",
+            "marker": "T",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **PKG-01 [T]** Code die twee of meer modules nodig hebben, is een package, nooit een kopie. `ps-module duplicates` (in\n  `composer check`) dwingt dat af."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-02",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-02** Eerst zoeken, dan bouwen, in deze volgorde: onze packages (`ps-module find \"<behoefte>\"`), PrestaShop zelf\n  (`ps-module ps find \"<term>\"`), externe packages (`ps-module find --external \"<behoefte>\"`). Het plan van een feature\n  heeft een tabel \"Hergebruik\" met per behoefte de uitkomst, of \"gezocht: niets gevonden\" met de zoektermen."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-03",
+            "marker": "T",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "tool:mono"
+            ],
+            "markdown": "- **PKG-03 [T]** Twee soorten packages. **Runtime** (`prestashopheaven/runtime-*`, namespace `PrestaShopHeaven\\Runtime\\…`)\n  gaat mee in de release-zip, gescoped. **Build** (`prestashopheaven/build-*`, namespace `PrestaShopHeaven\\Build\\…`)\n  staat alleen in `require-dev` en komt nooit in een zip. `ps-module build` weigert een build-package in de zip; een\n  runtime-package vraagt nooit een build-package."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-04",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "tool:mono"
+            ],
+            "markdown": "- **PKG-04** Packages staan in monorepo's per categorie (`libraries/mono-runtime-<categorie>`,\n  `libraries/mono-build-<categorie>`, zie `docs/packages/monorepos.md`), gesplitst naar één read-only repo per package\n  voor Packagist. Wijzigen doe je in de monorepo, nooit in een split-repo."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-05",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-05** Eén versie per monorepo. Een release: `## X.Y.Z` in `CHANGELOG.md`, `ps-module mono set-version X.Y.Z`,\n  commit `Release X.Y.Z - <notes>` op `main` en pushen; de workflow controleert, tagt, splitst en werkt Packagist bij.\n  Nooit met de hand taggen."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-06",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-06** Semver met een BC-beleid: eerst deprecaten (`@deprecated` met de vervanger), alleen verwijderen in een\n  geplande major. Modules vragen `^X.Y`."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-07",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-07** Liever kleine packages met één verantwoordelijkheid; kleine verwante onderdelen mogen samen. Afhankelijkheden\n  gaan één kant op (`monorepos.md`); geen kringen."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-08",
+            "marker": "T",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "tool:mono"
+            ],
+            "markdown": "- **PKG-08 [T]** Definition of done per monorepo: `composer check` = `ps-module mono check` (regels, lint, coding standard,\n  PHPStan tegen PS 8 + 9, PHP-compatibiliteit, conventies, unit-tests met 100 % regeldekking per package). Een klasse die\n  een echte winkel nodig heeft staat in `extra.prestashopheaven.integration-tested` en heeft een eigen\n  `tests/Integration/<pad>Test.php`, gedraaid in echte winkels door de fixture-module van de monorepo\n  (`tests/fixture/<module>`, `ps-module shops run`; in CI op elke PrestaShop-versie van de matrix). Die run test ook de\n  gescopete release-zip."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-09",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "tool:architecture"
+            ],
+            "markdown": "- **PKG-09** `runtime-shared-kernel` is puur PHP en het enige package dat de Domain-laag van een module mag gebruiken\n  (ARCH-03)."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-10",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-10** Een runtime-package werkt op het hele bereik (PS 8.1.0 – 9.x, PHP 8.1+) en is volledig multistore (MS).\n  Verschillen tussen versies blijven in het package."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-11",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-11** Geen klassenamen als strings die het scopen missen (de oude LIB-04). Een service van een package staat in de\n  module onder het eigen id van de module (`prestashopheaven.<module>.<service>`, bijv. `.command_bus`), nooit onder de\n  gedeelde klassenaam; een PSR-interface bind je met `_defaults.bind`, nooit als globale alias (PrestaShop 9 heeft er\n  zelf services voor)."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-12",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-12** Een runtime-package met teksten levert zijn vertalingen in alle 33 talen zelf mee (zoals\n  `UpdaterNoticeTexts` van runtime-kit)."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-13",
+            "marker": "T",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "tool:mono"
+            ],
+            "markdown": "- **PKG-13 [T]** Elk package heeft een `README.md` met \"Use when\" en voorbeelden, een `CHANGELOG.md`, en in\n  `composer.json > extra.prestashopheaven` `kind`, `use-when` en `keywords` (invoer voor de package-index)."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-14",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-14** Dev-bestanden van een package zijn `export-ignore` in `.gitattributes` (`/tests`, …): Composer laat ze uit\n  `vendor/`, ook bij een path-repository. Een fixture-module kopieert de integratietests daarom zelf\n  (`ps-module mono fixture-tests`, na `composer install`)."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-15",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-15** Een module gaat alleen bij zijn eigen volgende update over naar nieuwere packages of van module-kit/\n  module-dev-tools naar de collectie, of als de gebruiker een voorstel goedkeurt. Geen massamigratie."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-16",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-16** Werk je tegelijk aan een package en een module: `vendor/bin/ps-module link` (path-repositories naar\n  `libraries/mono-*/packages/*` met de versie van de monorepo, en naar de losse packages); `ps-module unlink` zet het\n  terug. `verify` en een release weigeren zolang er gekoppeld is."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-17",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-17** Externe packages eerst: code die een bestaand extern package al doet, schrijf je niet opnieuw. Gebruik het als\n  `ps-module external check` slaagt (risico's B1–B8 in `docs/packages/external.md`)."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-18",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-18** Zelf schrijven alleen als onze modules op het externe package kunnen breken (de check faalt) of als er niets\n  geschikts is; de reden (risiconummers) gaat in het register van `external.md`."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-19",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-19** Een extern package dat PrestaShop al meelevert, gebruik je van PrestaShop als de versie in elke ondersteunde\n  release past; gedeelde interfaces (`psr/container`, `psr/log`, …) worden nooit gescoped. Anders gaat het gescoped mee,\n  als scopen er veilig voor is."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-20",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-20** Externe packages worden opnieuw gecontroleerd in `composer check` en bij elke nieuwe PrestaShop-release in de\n  index (risico B9). Constraints blijven smal (`^X.Y`)."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-21",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-21** Een module vraagt nooit zelf een extern package: de lijm is altijd een van onze packages. Runtime-wrappers\n  staan in `mono-runtime-support`; `mono-runtime-core` hangt van geen enkel extern package af. Alleen vrije permissieve\n  licenties (MIT, BSD-2/3-Clause, Apache-2.0, ISC, 0BSD, Zlib, Unlicense, CC0-1.0); nooit betaalde of commerciële code."
+        },
+        {
+            "type": "rule",
+            "id": "PKG-22",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PKG-22** Een build-package wordt gesplitst als het meer dan 10 subtools heeft, of als een subtool los nuttig is."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

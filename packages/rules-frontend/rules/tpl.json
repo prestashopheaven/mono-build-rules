@@ -1,0 +1,354 @@
+{
+    "number": "7",
+    "title": "Templates, assets en frontend",
+    "prefixes": [
+        "TPL"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "TPL-01",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **TPL-01 [V]** Smarty: elke `{$var}` krijgt `|escape:'<type>':'UTF-8'` (type: html,\n  htmlall, url, urlpathinfo, quotes, hex, hexentity, javascript, mail) of een van\n  `|intval`, `|floatval`, `|boolval`, `|count`, `|json_encode`. Bewust ongeëscapete HTML krijgt\n  `{$html nofilter}` met een Smarty-comment erboven die uitlegt waarom het veilig is.\n  `|unescape` en `|html_entity_decode` zijn verboden. Dubbel escapen gebeurt niet: de core\n  slaat `html`/`htmlall` over als auto-escaping al aanstaat. JSON in een HTML- of\n  `data-`-attribuut: `json_encode($x, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)`."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-08",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator",
+                "tool:translations"
+            ],
+            "markdown": "- **TPL-08 [V]** `{l}` altijd met `s='…'` in enkele quotes en `d='Modules.<Klasse>.Shop'`."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-09",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-09** Zet nooit onbetrouwbare data in `{l sprintf=[…]}`: die waarden worden niet\n  ge-escaped. Hetzelfde geldt voor variabelen in `Mail::send`: escape ze zelf voor de HTML-versie."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-02",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-02** Twig (Symfony-admin): auto-escaping blijft aan. Gebruik `|raw` alleen met\n  uitleg in een comment."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-03",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-03** Teksten in templates: Smarty `{l s='Text' d='Modules.<Klasse>.Shop'}`, Twig\n  `{{ 'Text'|trans({}, 'Modules.<Klasse>.Admin') }}`."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-04",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-04** Geen inline `<script>` en `<style>` in templates. Geef data aan JavaScript door via\n  `Media::addJsDef()` of `data-`-attributen."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-05",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-05** Gebruik in JavaScript geen jQuery als dat niet nodig is (front: zie TPL-10). Gebruik geen globale\n  variabelen behalve één namespace-object `window.<moduleName>`. Geen geminificeerde code\n  zonder de bron ernaast."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-06",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-06** CSS-klassen krijgen de modulenaam als prefix (`.heavenfoo-banner`), zodat ze niet\n  botsen met het thema. Gebruik geen `!important`, behalve om het thema te overrulen, en dan\n  met een comment."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-07",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-07** Templates zijn overschrijfbaar door het thema: render via\n  `module:<name>/views/templates/...`."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-10",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-10** Front-JS is vanilla JS zonder jQuery (deprecated in Hummingbird, weg in PS 10) en\n  zonder Bootstrap-JS-plugins. Core-events via `prestashop.on()`/`prestashop.emit()`, elementen via\n  `prestashop.selectors` of eigen `data-<module>-*`-attributen, niet via themaklassen. In de BO mag\n  jQuery."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-12",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-12** Smarty-variabelen die de module assignt beginnen met de modulenaam (`$heavenfoo_items`\n  of één array `$heavenfoo`): `assign()` is globaal en overschrijft anders thema-variabelen.\n  Klassen in `classes/` (globale namespace) krijgen de modulenaam als prefix."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-13",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **TPL-13 [V]** Geen HTML in PHP-strings; render via Smarty/Twig (uitzondering: de core-helpers\n  `displayError()`/`displayConfirmation()`)."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-14",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-14** Module-templates includen nooit thema-templates of templates van andere modules. Geen\n  lege wrappers: geef `''` terug als er niets te tonen is."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-15",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-15** FO-uitvoer voldoet aan WCAG 2.2 AA: elk veld een `<label>`, knoppen zijn `<button>`,\n  afbeeldingen hebben `alt`, AJAX-updates gebruiken `aria-live`, alles werkt met het toetsenbord."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-16",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-16** Productafbeeldingen via `$link->getImageLink($rewrite, $idImage,\n  \\ImageType::getFormattedName('home'))` met `width`/`height`/`loading=\"lazy\"`; nooit een\n  hard-coded type als `'home_default'`."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-17",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-17** Front-JS laden met `position: 'bottom'`, `attributes: 'defer'`, prioriteit > 158\n  (na ps_onepagecheckout), en pas starten als `window.prestashop && typeof prestashop.on === 'function'`."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-18",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-18** Elke widget is idempotent en opnieuw te initialiseren (`init(root)` op een container,\n  markering `data-<module>-ready`, delegated listeners op `document`). Herinit op `updatedProduct`,\n  `updatedCart`, `updateProductList`, `updatedDeliveryForm`, `updatedAddressForm`,\n  `clickQuickView`/`clickQuickview`/`quickviewOpened`, `jprestaDynamicContentLoaded`,\n  `opcPaymentMethodsUpdated`/`opcCarriersUpdated` (PS 9.2 OPC) en, als jQuery bestaat,\n  `opc-load-payment:completed`/`opc-load-carrier:completed` (OPC PS) en\n  `as4-After-Set-Results-Contents`. Vangnet: een MutationObserver op `#js-product-list` of de\n  checkout-container. Vertrouw niet alleen op `changedCheckoutStep` (Hummingbird emit hem niet)."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-19",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-19** Emit core-events alleen met de core-payload (bijv. `updateCart` na een eigen\n  add-to-cart). Herdefinieer nooit `prestashop`, `$`, `jQuery`, `gtag`, `dataLayer` of\n  `prestashop.blockcart` (`window.dataLayer = window.dataLayer || []`). Negeer `updateCart` met\n  `reason.linkAction === 'refresh'` (JPresta) in tracking en side-carts."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-20",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-20** Gebruik selectors die in Classic én Hummingbird bestaan (`#js-product-list`,\n  `#add-to-cart-or-refresh`, `[data-button-action=\"add-to-cart\"]`,\n  `.js-product-miniature[data-id-product]`) of `prestashop.selectors`. Ga niet uit van ouders of\n  kinderen rond hook-output (page-cache-wrappers, ESI-markers)."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-21",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-21** Inputs die bij het add-to-cart-formulier horen krijgen `form=\"add-to-cart-or-refresh\"`\n  (pagebuilders verplaatsen ze)."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-22",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-22** Markup is Bootstrap-onafhankelijk: eigen BEM-klassen met modulenaam-prefix, geen\n  klassen of attributen die alleen in BS4 (`ml-*`, `sr-only`, `form-group`, `data-toggle`) of alleen\n  in BS5 (`ms-*`, `visually-hidden`, `data-bs-*`) bestaan. CSS onder één rootklasse, lage\n  specificiteit, geen generieke elementselectors."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-23",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-23** Tracking- en marketingscripts staan in eigen `<script>`-tags of bestanden, zodat\n  consent-modules ze kunnen blokkeren. Geen niet-essentiële cookies vóór consent. Bedrijfslogica\n  (order, voorraad, mail) staat nooit in dezelfde hookmethode als tracking: cookieblockers halen\n  modules uit hooks."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-24",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-24** Partials include je met `{include file='module:<name>/views/templates/…'}`, niet\n  relatief, zodat een thema ze kan overriden."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-25",
+            "marker": "T",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "tool:assets"
+            ],
+            "markdown": "- **TPL-25 [T]** Met het recept `typescript` staat alle JS als TypeScript in `<module>/_dev/` (`front/`, `back/`,\n  `lib/`, `types/`, `package.json` met lock), zoals de modules van PrestaShop zelf. `npm run build` (of\n  `ps-module assets build`) maakt per entry `views/js/<entry>.js`. Die uitvoer bewerk je nooit met de hand; bronnen,\n  `_dev/build-manifest.json` en uitvoer gaan samen in één commit. `ps-module assets check` (`composer check`,\n  DoD-stap `assets`) faalt als ze niet bij elkaar horen."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-26",
+            "marker": "T",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **TPL-26 [T]** Gebouwde JS is gewone browser-JS: één IIFE per entry, geen `import`/`export` op runtime, niet\n  geminificeerd en leesbaar (PHP-17, TPL-05), de licentieheader bovenaan (banner uit `.license-header.txt`, PHP-03),\n  geen `\"use strict\"` op bestandsniveau (CCC voegt scripts samen), geen sourcemaps. TypeScript `strict`, typecheck,\n  lint en de tests (TST-20..26) moeten slagen vóór er gebouwd wordt."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-27",
+            "marker": "T",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **TPL-27 [T]** `_dev/`, `node_modules/`, `package*.json`, `tsconfig*`, `*.ts` en build-configs komen niet in de zip\n  (`ps-module build`) en worden niet als modulebestand gevalideerd. Lever geen npm-pakketten mee die PrestaShop al\n  heeft (STR-10) en geen kopieën van core-JS; importeer nooit bestanden uit de core (`admin-dev/...`)."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-28",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-28** De backoffice breid je uit met de componenten van het admin-thema via\n  `window.prestashop.component` (`initComponents([...])`, `Grid` + `GridExtensions`, `Router`, `EventEmitter`,\n  `MultistoreConfigField`, `TranslatableInput`, …; PS 8.1 en 9.x, alle Symfony-pagina's), niet met eigen\n  nabouw. Start pas in een jQuery-ready-handler (die van de core maakt de componenten, asynchroon na\n  `DOMContentLoaded`), sla componenten over die de versie niet heeft of die al gestart zijn, en val op\n  legacy-pagina's (geen `component`) terug op gewone DOM-code. BO-scripts laad je via\n  `actionAdminControllerSetMedia` met `addJS(<pad>?v=<versie>)`, alleen op de eigen pagina's (`controller_name`,\n  HK-11), niet met een `<script>`-tag in Twig."
+        },
+        {
+            "type": "rule",
+            "id": "TPL-29",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-29** Een module zet nooit code in de build of de bestanden van het thema: thema's worden zonder bronnen\n  geleverd en zijn van de winkelier. Front-JS is een eigen bundel via `actionFrontControllerSetMedia` (of\n  `setMedia()` van een eigen front-controller) die de runtime-API gebruikt: `prestashop.on()`/`emit()`,\n  `prestashop.selectors`, en alleen als ze bestaan `prestashop.themeSelectors` (Classic) en `window.Theme`\n  (Hummingbird). Een thema kan het bestand vervangen in `themes/<thema>/modules/<module>/views/js/`."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

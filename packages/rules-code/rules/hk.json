@@ -1,0 +1,160 @@
+{
+    "number": "6",
+    "title": "Hooks",
+    "prefixes": [
+        "HK"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "HK-01",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **HK-01** Elke hook heeft een trait `src/Module/Hook/<HookNaam>.php` met de methode\n  `hook<HookNaam>(array $params)` die de hoofdklasse `use`t. De trait is dun en dispatcht een\n  command of query via `$this->getCommandBus()` (ARCH-09). Een widget (`WidgetInterface`, voor meerdere\n  display-hooks tegelijk) staat in `src/Module/Helper/Widget.php`, de cache-helper in\n  `src/Module/Helper/DisplayCache.php` (zie recept `display-hook`). Traits mogen geen constanten\n  bevatten (pas vanaf PHP 8.2)."
+        },
+        {
+            "type": "rule",
+            "id": "HK-08",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **HK-08** Overschrijft een eigen trait een methode van `ModuleBase` (bijv. `hookDisplayAdminAfterHeader()`), los\n  het conflict dan op in de hoofdklasse met `use ModuleBase, X { X::methode insteadof ModuleBase; }`. Liever: voeg de\n  functionaliteit toe aan runtime-kit (PKG-01). Vertaalde tabs en de Configure-knop doet runtime-kit zelf\n  (`TABS_WORDING_DOMAIN`, trait `ConfigurationPage` met `CONFIGURATION_PAGE`)."
+        },
+        {
+            "type": "rule",
+            "id": "HK-02",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **HK-02** Registreer hooks alleen via `ModuleDefinition::HOOKS` (INS-01)."
+        },
+        {
+            "type": "rule",
+            "id": "HK-03",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **HK-03** Display-hooks geven een `string` terug (leeg als er niets te tonen is) en\n  renderen via `$this->fetch('module:<name>/views/templates/hook/<file>.tpl')`. Gebruik\n  caching (`$this->isCached()` met `$this->getCacheId()`) bij zware output. Cache-id's beginnen\n  met de modulenaam, zodat `_clearCache()` precies de cache van deze module leegt. Cache alleen\n  output die voor alle klanten binnen winkel/taal/valuta/groep gelijk is (CMP-19)."
+        },
+        {
+            "type": "rule",
+            "id": "HK-04",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **HK-04** Action-hooks geven niets terug (`void`), behalve als de hook een waarde verwacht.\n  Ze mogen nooit een exception laten ontsnappen die de checkout of het opslaan van een\n  object breekt: vang de exception, log hem en ga door."
+        },
+        {
+            "type": "rule",
+            "id": "HK-07",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **HK-07** Services uit de Symfony-container haal je in hooks en legacy-code via één\n  helper-trait (`ModuleServices` van runtime-cqrs: `getCommandBus()` en `findModuleService()`): een\n  ontbrekende service geeft dan een logregel in plaats van een kapotte pagina. Test hooks met\n  `Hook::exec($hook, $params, $idModule)`, zodat andere modules niet meedraaien."
+        },
+        {
+            "type": "rule",
+            "id": "HK-05",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **HK-05** Gebruik `actionFrontControllerSetMedia` om CSS/JS te laden, en\n  `$this->context->controller->registerStylesheet()` / `registerJavascript()` met een unieke\n  id `module-<name>-<onderdeel>` (een gelijke id vervangt het asset van een ander). Laad assets\n  alleen op pagina's waar ze nodig zijn: controleer `$this->context->controller->php_self`, niet\n  `Tools::getValue('controller')`, en nooit in de constructor."
+        },
+        {
+            "type": "rule",
+            "id": "HK-06",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **HK-06** Hooks die in PS 9 niet meer bestaan of anders werken, noem je in `README.md` bij\n  \"Compatibiliteit\". Controleer de hooklijst van beide versies als `ps_min` < 9 en `ps_max` ≥ 9."
+        },
+        {
+            "type": "rule",
+            "id": "HK-09",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **HK-09** Hooks die pas in 9.1+ bestaan (`actionModuleEnable`, `actionModuleDisable`,\n  `actionModuleUpgradeAfter`, `actionConfigurationUpdateValueBefore`) gebruik je alleen als\n  `ps_min` ≥ 9.1; anders moet de functie ook zonder werken."
+        },
+        {
+            "type": "rule",
+            "id": "HK-10",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **HK-10** Elke hook begint met een goedkope guard en stopt direct als hij niets te doen heeft\n  (verkeerde pagina, order van een andere module, module uit in deze winkel). Geen queries,\n  `new ObjectModel` of API-calls vóór die guard."
+        },
+        {
+            "type": "rule",
+            "id": "HK-11",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **HK-11** `displayBackOfficeHeader`/`actionAdminControllerSetMedia`: laad CSS/JS alleen op de\n  eigen BO-pagina's (eigen route/`_legacy_controller`, of `configure=<module>`)."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

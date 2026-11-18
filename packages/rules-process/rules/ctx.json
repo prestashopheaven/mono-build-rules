@@ -1,0 +1,65 @@
+{
+    "number": "21",
+    "title": "Context voor Claude",
+    "prefixes": [
+        "CTX"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nDoel: een volgende sessie begint met een actueel beeld van de module, zodat er minder gezocht hoeft\nte worden (minder requests en minder context).\n"
+        },
+        {
+            "type": "rule",
+            "id": "CTX-01",
+            "marker": "T",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "tool:context"
+            ],
+            "markdown": "- **CTX-01 [T]** Elke module-repo heeft `CONTEXT.md` in de root, geïmporteerd door de `CLAUDE.md` van de\n  repo (`@CONTEXT.md`), dus automatisch in elke sessie geladen. Bovenaan staan de **Notes** (door Claude\n  geschreven), onderaan het **overzicht** tussen de markeringen `ps-module:context:begin/end`, gegenereerd\n  uit de code door `vendor/bin/ps-module context`: identiteit, definitie (hooks met hun implementatie,\n  configuratie, tabs), codekaart met de eerste zin van elke docblock en de publieke methodes, routes,\n  services, controllers, templates, database, vertalingen en docs. Het overzicht nooit met de hand\n  bewerken; het verandert alleen als de code verandert (geen datums of teststatus)."
+        },
+        {
+            "type": "rule",
+            "id": "CTX-02",
+            "marker": "T",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **CTX-02 [T]** Na **elke** wijziging aan de module werkt Claude de Notes bij, zonder dat de gebruiker\n  erom vraagt, en draait `vendor/bin/ps-module context`. Dat commando weigert als de code veranderde maar\n  de Notes niet (`--no-notes` alleen als er echt niets te melden is). De Stop-hook van het project ververst\n  het overzicht zelf en houdt Claude tegen zolang de Notes niet bij de code passen."
+        },
+        {
+            "type": "rule",
+            "id": "CTX-03",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CTX-03** Notes zijn kort en feitelijk, voor een volgende sessie: *Purpose and behaviour* (wat de module\n  doet), *Architecture and data flow* (het pad door de code, waar state staat), *Decisions* (keuze +\n  reden), *Pitfalls and known issues*, *Open points*, *Recent changes* (nieuwste boven, ongeveer 10 regels;\n  oudere samenvatten). Geen herhaling van wat het overzicht al toont, geen code, geen geheimen."
+        },
+        {
+            "type": "rule",
+            "id": "CTX-04",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **CTX-04** Begin elke taak met `CONTEXT.md` als kaart en open alleen de bestanden die je nodig hebt.\n  Zoeken in de code mag altijd, maar staat iets in de context dat niet klopt, corrigeer dan de Notes (of\n  het docblock waar het overzicht uit komt)."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

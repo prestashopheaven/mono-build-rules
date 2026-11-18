@@ -1,0 +1,101 @@
+{
+    "number": "25b",
+    "title": "Updatesysteem",
+    "prefixes": [
+        "UPD"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nDe update-server (`update-system/`, `PLAN.md`) levert updates aan winkels met de gratis PrestaHaven Updater\n(`heavenupdater`). Modules weten niets van de server; dit is wat een module-repo ervoor regelt.\n"
+        },
+        {
+            "type": "rule",
+            "id": "UPD-01",
+            "marker": "T",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "tool:conventions"
+            ],
+            "markdown": "- **UPD-01 [T]** De release-workflow (`templates/optional/ci/repo/.github/workflows/release.yml`) ondertekent de directe\n  zip (`ps-module sign … --trailers-from=HEAD`) en hangt aan de release: `<module>.zip`, `<module>.zip.sig` en, voor\n  `distribution: addons`, `<module>-addons.zip` (kopie van `dist/addons/<module>.zip`). `ps-module conventions` meldt\n  een workflow die dat niet doet."
+        },
+        {
+            "type": "rule",
+            "id": "UPD-02",
+            "marker": "T",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "tool:conventions"
+            ],
+            "markdown": "- **UPD-02 [T]** Geen `module_key` in de broncode (MOD-06): de directe build blijft leeg."
+        },
+        {
+            "type": "rule",
+            "id": "UPD-03",
+            "marker": "T",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "tool:conventions"
+            ],
+            "markdown": "- **UPD-03 [T]** Heeft een module een eigen `hookDisplayAdminAfterHeader`, dan lost de hoofdklasse de botsing met\n  runtime-kit op: `use ModuleBase, DisplayAdminAfterHeader { DisplayAdminAfterHeader::hookDisplayAdminAfterHeader\n  insteadof ModuleBase; }` (anders een fatale PHP-fout)."
+        },
+        {
+            "type": "rule",
+            "id": "UPD-04",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **UPD-04** Twee builds uit één stage (`ps-module build`): `dist/<module>.zip` = directe verkoop (prestahaven.com,\n  update-server) mét de updater-melding van runtime-kit; `dist/addons/<module>.zip` = Addons, zonder die melding, met\n  `module_key`. `validate-zip` controleert beide, `validator-api` de Addons-build. `distribution: own-clients` heeft\n  geen Addons-build. De Addons-upload (REL-08) gebruikt `dist/addons/<module>.zip`."
+        },
+        {
+            "type": "rule",
+            "id": "UPD-05",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **UPD-05** Elke module-repo op GitHub heeft het repository-secret `UPDATE_SIGNING_KEY` (privé-repo's op GitHub Free\n  kunnen het organisatie-secret niet gebruiken). `ps-module git pr --release` zet het als het ontbreekt; met de hand:\n  `ps-module update secret` (of `--all`, `--check`). De sleutel komt uit de `.env` van de workspace en verschijnt nooit\n  in uitvoer."
+        },
+        {
+            "type": "rule",
+            "id": "UPD-06",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **UPD-06** Een release met `ps-module git pr --release X.Y.Z --publish` krijgt `Update-*`-trailers (PrestaShop- en\n  PHP-regels, kanaal); de server neemt de release dan automatisch aan en registreert een nieuwe module zelf."
+        },
+        {
+            "type": "rule",
+            "id": "UPD-07",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **UPD-07** De updater-melding (runtime-kit `Updater/`) toont alleen op de eigen pagina's van de module, alleen als\n  `module_key` leeg is en `heavenupdater` niet geïnstalleerd is; \"Nu installeren\" gebruikt de Module Manager-route van\n  PrestaShop (rechten en demomodus van PrestaShop zelf). Geen netwerkverkeer, geen afhankelijkheid. Vanaf runtime-kit\n  1.4.0 heeft de balk een knop \"Help & support\" (ticketformulier van de update-server in een nieuw tabblad, met alleen\n  `module`, `version`, `ps` en `php`); is de Updater er al, is de melding verborgen of gaat het om `heavenupdater` zelf,\n  dan toont een smalle balk van één regel alleen die knop (op de eigen pagina's, alleen bij lege `module_key`). Een\n  module zonder eigen pagina zet de knop zelf in zijn template: `class_exists(UpdaterNotice::class) ?\n  UpdaterNotice::helpLink($this) : ''` (de guard is verplicht: de Addons-build laat `src/Updater` weg)."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

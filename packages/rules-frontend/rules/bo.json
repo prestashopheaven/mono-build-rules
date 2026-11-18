@@ -1,0 +1,149 @@
+{
+    "number": "9",
+    "title": "Backoffice en Symfony",
+    "prefixes": [
+        "BO"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "BO-01",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **BO-01** Nieuwe backoffice-pagina's bouw je met Symfony (controller in `src/Controller/Admin/`,\n  route in `config/routes.yml`, Twig in `views/templates/admin/`). Geen nieuwe legacy\n  `ModuleAdminController`, tenzij het niet anders kan."
+        },
+        {
+            "type": "rule",
+            "id": "BO-02",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **BO-02** De configuratiepagina gebruikt op PS 8/9 bij voorkeur een Symfony-formulier\n  (`getContent()` redirect naar de route). HelperForm mag voor eenvoudige instellingen."
+        },
+        {
+            "type": "rule",
+            "id": "BO-03",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **BO-03** Controllers en hun acties zijn beveiligd. Is `ps_min` < 9: de annotatie\n  `@AdminSecurity(\"is_granted('read', request.get('_legacy_controller'))\")`; die werkt in PS 8\n  en (deprecated) in PS 9.0–9.2. Het attribuut `#[AdminSecurity(...)]` alleen als `ps_min` ≥ 9:\n  de klasse bestaat niet in PS 8, dus PHPStan tegen PS 8 faalt erop."
+        },
+        {
+            "type": "rule",
+            "id": "BO-06",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **BO-06** Gebruik geen `@DemoRestricted` en `@ModuleActivated`: die bestaan niet meer in PS 9,\n  en dan faalt elke actie van de controller."
+        },
+        {
+            "type": "rule",
+            "id": "BO-07",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **BO-07** Symfony-admincontrollers `extends FrameworkBundleAdminController` letterlijk zo\n  (geen alias, geen tussenklasse): PS 9 vindt modulecontrollers met een regex op die tekst.\n  Afhankelijkheden via de constructor (expliciet in `config/admin/services.yml`), geen\n  `$this->get()` en geen `parent::__construct()` (bestaat niet in PS 9). Request-arrays lees je met\n  `$request->request->all()['key'] ?? []` (werkt in Symfony 4.4 en 6.4)."
+        },
+        {
+            "type": "rule",
+            "id": "BO-09",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **BO-09** Een service met `parent:` krijgt expliciet `public: true`: Symfony 4.4 (PS 8) erft\n  `public` niet van `_defaults` bij child-definities, en dan faalt het hele servicebestand (HTTP 500\n  op alle modulepagina's)."
+        },
+        {
+            "type": "rule",
+            "id": "BO-10",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **BO-10** Geef controllermethodes geen naam die al in `AbstractController` of\n  `FrameworkBundleAdminController` bestaat (bijv. `renderForm`, `render`, `redirectToRoute`,\n  `addFlash`, `getUser`): in PS 9 (Symfony 6.4) is dat een compile-fout van de hele container.\n  PHPStan ziet dit niet; de backoffice-rooktest van `ps-module shops run` wel."
+        },
+        {
+            "type": "rule",
+            "id": "BO-11",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **BO-11** Elke `_legacy_controller` die een route of controller gebruikt, staat in\n  `ModuleDefinition::TABS` (zichtbaar of verborgen). Anders faalt `is_granted` en logt PrestaShop\n  bij elke installatie \"Cannot register tab\"."
+        },
+        {
+            "type": "rule",
+            "id": "BO-08",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **BO-08** Symfony-constraints met een options-array (`new Length(['max' => 255])`), geen named\n  arguments: Symfony 4.4 (PS 8) kent die niet."
+        },
+        {
+            "type": "rule",
+            "id": "BO-04",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **BO-04** Services zoals in STR-06 (`config/common.yml` gedeeld). Gebruik autowiring waar\n  het kan. Service-id's: `<composer_vendor>.<module_name>.<service>` (bijv.\n  `prestashopheaven.heavenfoo.item_repository`), of de FQCN als id."
+        },
+        {
+            "type": "rule",
+            "id": "BO-05",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **BO-05** Controleer CSRF-tokens bij elke actie die iets wijzigt: Symfony-formulieren regelen\n  dat zelf. Bij HelperForm/legacy: `Tools::getAdminTokenLite()`."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

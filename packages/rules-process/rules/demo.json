@@ -1,0 +1,113 @@
+{
+    "number": "24",
+    "title": "Demowinkel",
+    "prefixes": [
+        "DEMO"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nEén PrestaShop met alle modules, op een eigen VPS (TransIP) samen met de docs-site. Iedereen mag erin rondkijken;\nelke nacht gaat hij terug naar de laatste snapshot. Gereedschap: `resources/publish/demo-site.sh` van build-tools\n(op de server) en `ps-module demo-site` / `ps-module publish demo` (lokaal en in CI).\n"
+        },
+        {
+            "type": "rule",
+            "id": "DEMO-01",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEMO-01** De demowinkel is een eigen PrestaShop in een beperkt aantal talen (`DEMO_SITE_LANGUAGES`). Een module\n  moet in die talen werken; de andere vertalingen staan in de module, niet in de demo."
+        },
+        {
+            "type": "rule",
+            "id": "DEMO-02",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEMO-02** Elke nacht (cron op de VPS, `demo-site.sh nightly`): de laatste snapshot terug (bestanden + database) en\n  een rooktest (home per taal, `TEST_PATHS`, backoffice-login, HTTP 200 zonder PHP-fouten; uitslag in\n  `snapshots/last-test.json`, `ps-module demo-site status`). Geen API-sleutel op de VPS daarvoor nodig."
+        },
+        {
+            "type": "rule",
+            "id": "DEMO-03",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEMO-03** Een module komt in de demo met `ps-module publish demo` (REL-08): alleen die module wordt geïnstalleerd\n  of geüpgraded in de winkel zoals hij is (`bin/console prestashop:module install|upgrade`; geen restore, de rest van\n  de winkel blijft staan), dan de rooktest en een nieuwe snapshot. Faalt iets, dan zet de server alleen de modulemap\n  en de database van vlak daarvoor terug."
+        },
+        {
+            "type": "rule",
+            "id": "DEMO-04",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEMO-04** De backoffice van de demo staat in PrestaShops demomodus (`_PS_MODE_DEMO_`, `demo-site.sh demo-mode\n  on`): bezoekers kunnen rondkijken maar geen modules uploaden. Een upload zou PHP-code op de VPS uitvoeren."
+        },
+        {
+            "type": "rule",
+            "id": "DEMO-05",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEMO-05** Na elke deploy (docs of demo) maakt de pipeline een TransIP-snapshot van de hele VPS als noodbackup\n  (`ps-module publish vps-snapshot`, API v6; `TRANSIP_SNAPSHOT_KEEP`). De TransIP-API-sleutel staat alleen in `.env`\n  en in de CI-secrets, **nooit op de VPS**: iedereen kan in de demo, en de sleutel geeft toegang tot het hele account."
+        },
+        {
+            "type": "rule",
+            "id": "DEMO-06",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEMO-06** De lokale kopie staat in `MODULES/demo-site/` (Docker, `shop/` gemount: wijzigingen werken direct). Een\n  wijziging aan de demo (instelling, demodata, thema) maak je lokaal, legt `demo.sh snapshot \"<wat>\"` vast en zet\n  `ps-module demo-site push <snapshot>` op de server (restore + test, terug bij een fout, daarna een VPS-snapshot).\n  De server houdt zijn eigen `app/config/parameters.php`; domein en `.htaccess` volgen `DEMO_SITE_URL`; het\n  tabelprefix moet gelijk zijn."
+        },
+        {
+            "type": "rule",
+            "id": "DEMO-08",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEMO-08** De demo heeft een introductiepagina (`/<DEMO_SITE_INTRO_PATH>/`, standaard `/start/`) met links naar de\n  winkel en de backoffice, en de PrestaHaven-modules met hun versie en een link naar hun handleidingen op de\n  docs-site. De inlog staat **altijd** al ingevuld (PrestaShop 9 in demomodus vult hem in uit `?email=&password=`; een\n  blok bovenaan `<admin>/.htaccess` stuurt elke GET van de inlogpagina zonder die parameters door, Apache), bezoekers\n  klikken alleen op \"Inloggen\": `demo@demo.com` / `demodemo` (`DEMO_SITE_EMAIL`/`_PASSWORD`; precies één medewerker met\n  dat adres, anders faalt het inloggen). De demo draagt het merk (`branding/`): introductiepagina in de merkkleuren met\n  `logo.svg`, het logo in de kop van de backoffice (CSS-regel in de admin-thema's) en `brand.json > logo_png` als\n  winkellogo en op het inlogscherm. E-mail staat uit\n  (`PS_MAIL_METHOD` = 3, nooit versturen) en bezoekers kunnen het niet aanzetten (demomodus blokkeert de\n  e-mailinstellingen). `demo-settings.php` zet dit na elke restore en deploy opnieuw; de rooktest controleert de\n  introductiepagina en de ingevulde inlog."
+        },
+        {
+            "type": "rule",
+            "id": "DEMO-07",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEMO-07** Met `--env=<bestand>` komen alle `DEMO_SITE_*`, `DOCS_SITE_*` en `TRANSIP_*` alleen uit dat bestand:\n  een test tegen de lokale demo raakt nooit de echte servers of het TransIP-account."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

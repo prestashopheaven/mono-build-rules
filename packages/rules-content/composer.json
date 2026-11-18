@@ -1,0 +1,44 @@
+{
+    "name": "prestashopheaven/build-rules-content",
+    "description": "Module-Factory rules for content: translations, manuals, marketing texts, screenshots and logos.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "George van Engers",
+            "email": "vanengers@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "prestashopheaven/build-rules-core": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PrestaShopHeaven\\Build\\RulesContent\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PrestaShopHeaven\\Build\\RulesContent\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        },
+        "prestashopheaven": {
+            "kind": "build",
+            "use-when": "When texts, translations, documentation or marketing of a module are written: the rules of TR, DOCS and MKT.",
+            "keywords": [
+                "rules",
+                "conventions",
+                "translations",
+                "docs",
+                "marketing",
+                "logo",
+                "screenshots"
+            ]
+        }
+    }
+}

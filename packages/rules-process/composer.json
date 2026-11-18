@@ -1,0 +1,45 @@
+{
+    "name": "prestashopheaven/build-rules-process",
+    "description": "Module-Factory rules for the process: versions and releases, context for Claude, the git workflow, the demo shop, parallel sessions and the update system.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "George van Engers",
+            "email": "vanengers@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "prestashopheaven/build-rules-core": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PrestaShopHeaven\\Build\\RulesProcess\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PrestaShopHeaven\\Build\\RulesProcess\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        },
+        "prestashopheaven": {
+            "kind": "build",
+            "use-when": "When a module is released, published, committed or worked on next to other sessions: the rules of REL, CTX, GIT, DEMO, PAR and UPD.",
+            "keywords": [
+                "rules",
+                "conventions",
+                "release",
+                "git",
+                "publish",
+                "demo",
+                "update server",
+                "sessions"
+            ]
+        }
+    }
+}

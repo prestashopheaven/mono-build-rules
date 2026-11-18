@@ -1,0 +1,238 @@
+{
+    "number": "19",
+    "title": "Multistore",
+    "prefixes": [
+        "MS"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nElke module is **volledig** multistore-compatibel (Addons-veld \"Fully\"); \"Partially\" of \"Not at\nall\" bestaat bij ons niet. Achtergrond, core-gedrag en codepatronen: `research/technical-standards.md`\nsectie D.\n"
+        },
+        {
+            "type": "rule",
+            "id": "MS-01",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **MS-01** Elke module is \"Fully\" multistore-compatibel (Addons-veld) en zet in de constructor (vóór\n  `parent::__construct()`) `$this->multistoreCompatibility = self::MULTISTORE_COMPATIBILITY_YES;`. \"Fully\" betekent\n  (core-definitie): per winkel anders te configureren, in één keer voor alle winkels of een groep te configureren, en per\n  winkel aan of uit te zetten. Kan een feature dat niet, dan is het een bug, geen \"Partially\"."
+        },
+        {
+            "type": "rule",
+            "id": "MS-02",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:shops"
+            ],
+            "markdown": "- **MS-02 [T]** Installeren geldt voor alle winkels. `ModuleBase::install()`/`uninstall()` en `Upgrade::apply()` draaien via\n  `ShopScope::runInAllShops()` (runtime-kit) in `Shop::CONTEXT_ALL`; doe hetzelfde in eigen install-,\n  upgrade- of CLI-code die config schrijft. Zonder dit activeert PrestaShop de module alleen\n  in de gekozen winkel, en via `bin/console` alleen in de standaardwinkel. Uitzetten per winkel doet de winkelier daarna\n  in Module Manager (in de context van die winkel)."
+        },
+        {
+            "type": "rule",
+            "id": "MS-03",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:shops"
+            ],
+            "markdown": "- **MS-03 [T]** Standaardwaarden zijn globaal: Installer/Upgrade schrijven `CONFIGURATION` en `GENERATED_CONFIGURATION`\n  met `Configuration::updateGlobalValue()`. Nooit `updateValue()` zonder shop-argumenten in install-, upgrade- of\n  CLI-code. Een upgrade overschrijft nooit een waarde op winkel- of groepsniveau."
+        },
+        {
+            "type": "rule",
+            "id": "MS-04",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:shops"
+            ],
+            "markdown": "- **MS-04** Lees instellingen in de context van wat je verwerkt. FO/hook zonder object: `Configuration::get($key)`\n  (= winkel van het verzoek). Gaat het om een order, winkelwagen, klant of cronrun voor een winkel:\n  `Configuration::get($key, null, (int) $order->id_shop_group, (int) $order->id_shop)`, in Symfony\n  `$configuration->get($key, $default, ShopConstraint::shop((int) $order->id_shop))`. Gebruik `getGlobalValue()`\n  alleen voor sleutels die bewust voor alle winkels gelijk zijn, en documenteer die in `ModuleDefinition`\n  (bijv. een constante `GLOBAL_CONFIGURATION`).\n  Een groepswaarde schrijf je met `updateValue($k, $v, false, $idGroup, 0)`; met `$idShop = null` neemt\n  PrestaShop de contextwinkel en schrijf je een winkelwaarde."
+        },
+        {
+            "type": "rule",
+            "id": "MS-05",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:shops"
+            ],
+            "markdown": "- **MS-05 [T]** De configuratiepagina (recept `config-form`) is een multistore-formulier: `getParent()` geeft\n  `MultistoreConfigurationType::class`, elk veld heeft `'multistore_configuration_key' => <SLEUTEL>`, de dataprovider\n  `extends AbstractMultistoreConfiguration` en schrijft met `updateConfigurationValue()`, de pagina laadt\n  `initComponents(['MultistoreConfigField'])`, en de save-route heeft `methods: [POST, PATCH]`. Context Alle winkels\n  = globale waarde; groep/winkel: vinkje aan = eigen waarde, vinkje uit = waarde verwijderd (erft van boven).\n  Elk veld uit `buildResolver()` staat in het formulier (in Alle winkels eist `validateConfiguration()` alle\n  velden). Services: `prestashop.adapter.legacy.configuration`, `prestashop.adapter.shop.context`,\n  `prestashop.adapter.multistore_feature`."
+        },
+        {
+            "type": "rule",
+            "id": "MS-06",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MS-06** HelperForm gebruiken we niet voor instellingen: hij kent geen \"erft van boven\"-keuze per veld, en de\n  multistore-ronde van de winkeltests faalt erop. Altijd het formulier van MS-05."
+        },
+        {
+            "type": "rule",
+            "id": "MS-07",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MS-07** Eigen data met een winkelband: een entiteit die per winkel bestaat of verschilt krijgt een `_shop`-tabel\n  (`id_<entiteit>`, `id_shop`, samen PK; DB-07) + `Shop::addTableAssociation()`; lees met\n  `Shop::addSqlAssociation()` of `id_shop IN (implode(',', Shop::getContextListShopID()))`, schrijf via ObjectModel\n  (`id_shop_list`) of `associateTo()`. Data die van één winkel is (log, sync-status, token, tellers) krijgt kolommen\n  `id_shop` (+ `id_shop_group`) met een index. Een query in FO of hook zonder shop-filter is een bug."
+        },
+        {
+            "type": "rule",
+            "id": "MS-08",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:shops"
+            ],
+            "markdown": "- **MS-08** Nieuwe en verwijderde winkels: registreer `actionShopDataDuplication` als de module eigen per-winkeldata\n  heeft (kopieer de rijen en de winkelwaarden van de config van `old_id_shop` naar `new_id_shop`), en\n  `actionObjectShopDeleteAfter` om rijen van het verwijderde `id_shop` op te ruimen (de core doet dat niet voor\n  module-tabellen en ook niet voor `ps_configuration`)."
+        },
+        {
+            "type": "rule",
+            "id": "MS-09",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:shops"
+            ],
+            "markdown": "- **MS-09** Respecteer aan/uit per winkel waar de core dat niet doet: Symfony-subscribers, service-decorators,\n  CQRS-handlers, console-commands, cron/webhook-controllers die over winkels lopen, en action-hooks die in de BO\n  (context Alle winkels) draaien voor een object van één winkel. Controleer daar `module_shop` voor `id_shop` van het\n  object (`ShopScope::isModuleActiveInShop()` uit runtime-kit)."
+        },
+        {
+            "type": "rule",
+            "id": "MS-10",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MS-10** URL's en mails horen bij de winkel van het object: `Link::getModuleLink(..., $idLang, (int) $order->id_shop)`,\n  `Mail::send(..., $idShop = (int) $order->id_shop)`. Geen hardcoded domein of `_PS_BASE_URL_` in callback-URL's;\n  toon cron-/webhook-URL's in de BO per winkel."
+        },
+        {
+            "type": "rule",
+            "id": "MS-11",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MS-11** Cron en CLI lopen per winkel: `foreach (\\Shop::getShops(true, null, true) as $idShop)` met\n  `\\Shop::setContext(\\Shop::CONTEXT_SHOP, (int) $idShop)` en `$context->shop = new \\Shop((int) $idShop)`, of één\n  cron-URL per winkel (een front controller draait in de winkel van het domein). Console: `--id_shop` werkt\n  alleen op PS 8; op PS 9 (Symfony 6.4) weigert elk commando die optie. Een eigen commando krijgt een eigen optie\n  (bijv. `--shop=<id>`) of loopt over `ShopScope::shopIds()`. Aan/uit per winkel in een script\n  (`Shop::setContext(CONTEXT_SHOP)` + `Module::enable()/disable()`) vraagt een geboote kernel (vertalingen)."
+        },
+        {
+            "type": "rule",
+            "id": "MS-12",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MS-12** BO-lijsten en grids filteren op `Shop::getContextListShopID()` en tonen in context Alle winkels/groep een\n  kolom Winkel. Klant- en orderqueries respecteren deling binnen een groep: `Shop::addSqlRestriction(Shop::SHARE_CUSTOMER)`\n  / `Shop::SHARE_ORDER`."
+        },
+        {
+            "type": "rule",
+            "id": "MS-13",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MS-13** Bestanden per winkel (logo, banner, upload): naam met contextsuffix (`-s<id>`, `-g<id>`), bestandsnaam in\n  een configuratiewaarde per context, terugval op de standaard (devdocs-patroon blockadvertising). Uninstall verwijdert\n  alle varianten."
+        },
+        {
+            "type": "rule",
+            "id": "MS-14",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MS-14** Display-cache en thema's: cache-id altijd via `$this->getCacheId()` (bevat `id_shop`), en elke winkel kan\n  een ander thema hebben: templates werken in Classic én Hummingbird (CMP-09, TPL-22)."
+        },
+        {
+            "type": "rule",
+            "id": "MS-15",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MS-15** In Symfony-code alleen de shop-API's die in 8 én 9 bestaan: `prestashop.adapter.shop.context` met\n  `isAllShopContext()`, `isGroupShopContext()`, `isShopContext()`, `getContextListShopID()`, `getShopConstraint()`, en\n  `ShopConstraint::shop()/shopGroup()/allShops()`. Niet: `isAllContext()`, `isShopGroupContext()` (weg in 9),\n  `ShopConstraint::clone()/isSingleShopContext()` en `Core\\Context\\ShopContext` (pas in 9), `new ShopConstraint()`\n  (protected)."
+        },
+        {
+            "type": "rule",
+            "id": "MS-16",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:shops"
+            ],
+            "markdown": "- **MS-16** Uninstall laat in geen enkele winkel iets achter: `Configuration::deleteByName()` (alle winkels, groepen,\n  talen), down-migraties, bestanden met winkelsuffix. `module_shop`/`hook_module` ruimt de core op."
+        },
+        {
+            "type": "rule",
+            "id": "MS-17",
+            "marker": "T",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:shops"
+            ],
+            "markdown": "- **MS-17 [T]** `ps-module shops run` heeft een multistore-ronde (`testing.json: \"multistore\": true`, standaard aan;\n  alleen de ronde: `ps-module shops multistore <versie>`). Hij zet multistore aan met winkel 2 (groep 1) en winkel 3\n  (groep 2) en controleert: install vanuit de CLI geeft `module_shop`, hooks en alleen globale config in alle winkels;\n  het BO-formulier per context (alle winkels / winkel / groep, vinkje aan en uit); winkel- en groepswaarden gelden\n  alleen daar (ook in het front office); uitzetten in winkel 2 laat winkels 1 en 3 heel; een upgrade bewaart winkel-\n  en groepswaarden; uninstall laat niets achter; een verwijderde winkel laat geen rijen in moduletabellen achter. De\n  integratietests draaien in die ronde nog een keer met multistore aan."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

@@ -1,0 +1,77 @@
+{
+    "number": "25",
+    "title": "Meerdere sessies tegelijk",
+    "prefixes": [
+        "PAR"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nMeerdere Claude-sessies (of terminals) bouwen tegelijk aan verschillende modules in dezelfde werkruimte.\n"
+        },
+        {
+            "type": "rule",
+            "id": "PAR-01",
+            "marker": "",
+            "stages": [
+                "all"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PAR-01** Verschillende modules draaien naast elkaar: eigen testwinkels (compose-project `<module>-ps<versie>`),\n  eigen poortbereik (`testing.json > base_port`, uniek in de werkruimte; de scaffold kiest een vrij bereik), eigen\n  `.cache/`, `dist/` en DoD-stempels. `composer verify`, `shops run` en `docs build` van twee modules wachten dus niet\n  op elkaar. `shops up` stopt met een melding als een andere container de poort al gebruikt."
+        },
+        {
+            "type": "rule",
+            "id": "PAR-02",
+            "marker": "",
+            "stages": [
+                "all"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PAR-02** Alleen gedeelde dingen gaan één voor één (lock in `build-tools`, `MODULES/.cache/locks/`): de\n  demoserver (`publish docs`, `publish demo`, `publish vps-snapshot`, `demo-site …`), de verkoopwinkel\n  (`publish shop`), de testwinkels van één en dezelfde module (twee sessies op één module) en het eenmalig bouwen van\n  de docs-image. Een wachtend commando meldt wie er bezig is en gaat zelf verder; breek het niet af en omzeil het lock\n  niet."
+        },
+        {
+            "type": "rule",
+            "id": "PAR-03",
+            "marker": "",
+            "stages": [
+                "all"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PAR-03** Een sessie werkt alleen aan de module(s) die de gebruiker noemt. Het sessieregister\n  (`.claude/hooks/module-session.php`, `MODULES/.cache/sessions/`) houdt bij welke repo's een sessie zelf heeft\n  gewijzigd; de Stop-hook (DoD, context, git-vragen) kijkt alleen naar die repo's. Lezen in een andere module (als\n  voorbeeld) telt niet mee."
+        },
+        {
+            "type": "rule",
+            "id": "PAR-04",
+            "marker": "",
+            "stages": [
+                "all"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PAR-04** Een repo die een andere actieve sessie wijzigt, laat je met rust: geen wijzigingen, geen\n  git-commando's (checkout, branch, reset, stash, merge), geen `shops down` erin. De hooks waarschuwen; vraag de\n  gebruiker als het toch moet."
+        },
+        {
+            "type": "rule",
+            "id": "PAR-05",
+            "marker": "",
+            "stages": [
+                "all"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PAR-05** Start Claude in `MODULES/` of draai één keer `php .claude/hooks/install-settings.php`: alleen dan krijgt een\n  sessie die in `modules/` of in een module-repo start dezelfde hooks en `.env`-blokkade (Claude Code leest\n  `.claude/settings.json` alleen in de startmap). Hooks worden bij de start van een sessie gelezen: herstart sessies na\n  een wijziging in `.claude/settings.json`."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

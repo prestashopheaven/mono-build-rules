@@ -1,0 +1,65 @@
+{
+    "number": "10",
+    "title": "Frontoffice-controllers",
+    "prefixes": [
+        "FC"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "FC-01",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **FC-01** `controllers/front/<naam>.php` met de klasse `<Klasse><Naam>ModuleFrontController`.\n  Logica in `src/`."
+        },
+        {
+            "type": "rule",
+            "id": "FC-02",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **FC-02** AJAX-endpoints: JSON via `$this->ajaxRender(json_encode(...))` (niet `ajaxDie()`,\n  dat is weg in PS 9), alleen POST voor wijzigingen, en bij een fout een duidelijke\n  HTTP-statuscode. Token: `Tools::getToken(false)` is voor alle gasten gelijk en\n  `isTokenValid()` geeft `true` als `PS_TOKEN_ENABLE` uit staat. Voor gevoelige acties zonder\n  login is dat dus te zwak: gebruik dan een eigen token per sessie of per object."
+        },
+        {
+            "type": "rule",
+            "id": "FC-03",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **FC-03** Pagina's met klantdata: `$this->auth = true`. Controleer altijd of het\n  opgevraagde object van de ingelogde klant is. (`$guestAllowed` bestaat niet in PS 9 en doet\n  in PS 8 niets in `FrontController`; gebruik het niet.)"
+        },
+        {
+            "type": "rule",
+            "id": "FC-04",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **FC-04** Gebruik nette URL's via `$this->context->link->getModuleLink()` en definieer\n  routes met de hook `moduleRoutes` als een mooie URL nodig is."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

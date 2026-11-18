@@ -1,0 +1,160 @@
+{
+    "number": "11",
+    "title": "Beveiliging",
+    "prefixes": [
+        "SEC"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "SEC-01",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **SEC-01** Geen geheimen in de code of in de repo. API-sleutels staan in `Configuration`\n  (en worden in de backoffice gemaskeerd getoond)."
+        },
+        {
+            "type": "rule",
+            "id": "SEC-02",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **SEC-02** Bestandsuploads: controleer extensie én MIME-type, gebruik een willekeurige\n  bestandsnaam en sla de bestanden op buiten de webroot of in een map met een\n  `.htaccess` die PHP-uitvoer blokkeert."
+        },
+        {
+            "type": "rule",
+            "id": "SEC-03",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **SEC-03** Gebruik geen gebruikersinvoer in bestandspaden zonder `basename()` en een\n  whitelist."
+        },
+        {
+            "type": "rule",
+            "id": "SEC-04",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **SEC-04** Externe HTTP-aanroepen: altijd een timeout (max 10 s), TLS-verificatie aan, en\n  de fout opvangen en loggen."
+        },
+        {
+            "type": "rule",
+            "id": "SEC-05",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **SEC-05** Geef nooit stack traces of SQL-fouten weer aan klanten."
+        },
+        {
+            "type": "rule",
+            "id": "SEC-06",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **SEC-06** PS 9 blokkeert directe HTTP-toegang tot `.php`, `.json`, `.yml` en dergelijke onder\n  `/modules`. AJAX, cron en callbacks gaan dus altijd via een `ModuleFrontController` met\n  een token (`GENERATED_CONFIGURATION`, vergeleken met `hash_equals`)."
+        },
+        {
+            "type": "rule",
+            "id": "SEC-07",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **SEC-07** De module schrijft nooit in zijn eigen map. Cache: `_PS_CACHE_DIR_ . 'modules/<module>/'`,\n  blijvende bestanden: `_PS_ROOT_DIR_ . '/var/modules/<module>/'` (publiek: `img/`). Uninstall\n  verwijdert beide (INS-04)."
+        },
+        {
+            "type": "rule",
+            "id": "SEC-08",
+            "marker": "V",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **SEC-08 [V]** Laadt of roept de module externe domeinen aan vanuit de browser (scripts, iframes,\n  API's), zet ze dan in `header_csp.txt` in de module-root, gescheiden door `;`."
+        },
+        {
+            "type": "rule",
+            "id": "SEC-09",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **SEC-09** Geen `<iframe>`, behalve van de betaal- of dienstverlener zelf; motiveer het in\n  `README.md` en in het inzendcommentaar."
+        },
+        {
+            "type": "rule",
+            "id": "SEC-10",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **SEC-10** Betaalmodules: valideer callbacks met de handtekening van de provider (of `hash_equals`\n  op een eigen token), laad de cart via het `id_cart` uit de geverifieerde payload, controleer\n  `Validate::isLoadedObject`, de klant en dat er nog geen order is (`Order::getIdByCartId`), en geef\n  `validateOrder()` het bedrag dat de provider bevestigt. Dubbele callbacks doen niets."
+        },
+        {
+            "type": "rule",
+            "id": "SEC-11",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **SEC-11** Slaat de module persoonsgegevens op, dan registreert hij `actionDeleteGDPRCustomer`\n  (verwijderen/anonimiseren) en `actionExportGDPRData` (geeft `json_encode`-baar resultaat), en\n  accepteert hij alle vormen die psgdpr stuurt: `$params['email']`, `$params['id_customer']`,\n  `$params[0]` (id) en `$params[0]['email'|'phone']`. `README.md` noemt welke data hij bewaart en hoe\n  lang. Consent in eigen formulieren via `registerGDPRConsent`."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

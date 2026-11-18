@@ -1,0 +1,246 @@
+{
+    "number": "20",
+    "title": "Documentatie en marketing",
+    "prefixes": [
+        "DOCS",
+        "MKT"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nAlles in `<repo>/docs/`, gemaakt met `vendor/bin/ps-module docs …` (build-tools). Bronnen\nschrijft Claude; de rest genereert de tool.\n"
+        },
+        {
+            "type": "rule",
+            "id": "DOCS-01",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **DOCS-01 [T]** Elke module heeft `docs/docs.json` en per taal uit `i18n.json`\n  `docs/content/<iso>/manual.md` en `docs/content/<iso>/marketing.json`. Gegenereerde bestanden\n  (`manual/`, `marketing/`, `screenshots/`, `index.html`, `build-manifest.json`) nooit met de hand\n  wijzigen; ze gaan wel in git, zodat de gebruiker ze kan uploaden."
+        },
+        {
+            "type": "rule",
+            "id": "DOCS-02",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DOCS-02** De handleiding is voor winkeliers: inleiding, functies, vereisten, installatie,\n  configuratie (elke instelling met standaardwaarde), wat de klant ziet, multistore, verwijderen,\n  probleemoplossing, support. Secties met `##`, geen h1."
+        },
+        {
+            "type": "rule",
+            "id": "DOCS-03",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **DOCS-03 [T]** Bij **elke** wijziging, uitbreiding of nieuwe versie van de module: handleiding en\n  marketingteksten bijwerken (instellingen, features, screenshots), `version` in alle content gelijk aan\n  `$this->version`, en `ps-module docs build`. De stap `docs` hoort bij de definition of done en\n  verloopt bij elke codewijziging en bij elke wijziging in `docs/content/`."
+        },
+        {
+            "type": "rule",
+            "id": "DOCS-04",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **DOCS-04 [T]** Vertalingen hebben hetzelfde aantal secties en dezelfde screenshots als de brontaal.\n  Na vertalen of bijwerken: `ps-module docs mark-translated <iso>`. `docs status` noemt per taal de\n  verouderde secties of velden. Nooit `mark-translated` zonder echt te vertalen."
+        },
+        {
+            "type": "rule",
+            "id": "DOCS-05",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DOCS-05** Screenshots alleen via `docs.json` (`![Bijschrift](screenshot:<id>)` in de handleiding).\n  Minstens: configuratiepagina, front office in Hummingbird (nieuwste PS) en Classic (oudste PS),\n  mobiel. Zet representatieve instellingen in `shop.configuration`."
+        },
+        {
+            "type": "rule",
+            "id": "DOCS-06",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DOCS-06** Geen externe URL's, e-mailadressen of telefoonnummers in handleiding en marketingteksten\n  (REL-07; voor Addons een fout). De PDF heet `readme_<iso>.pdf`; `ps-module build` neemt alleen de Engelse mee\n  als `docs/readme_en.pdf` (REL-06), `ps-module publish docs` zet ze allemaal op de docs-site (REL-08)."
+        },
+        {
+            "type": "rule",
+            "id": "DOCS-07",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DOCS-07** Kan iets niet gegenereerd worden (PDF, screenshots, frames, taal niet in de winkel), meld de\n  reden uit de build-output aan de gebruiker. `ps-module skip docs \"<reden>\"` alleen als het echt niet kan."
+        },
+        {
+            "type": "rule",
+            "id": "DOCS-08",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **DOCS-08 [T]** Elke screenshot staat in het frame van de module (`docs/framed/<iso>/<id>.png`, gemaakt\n  door `docs build`/`docs frames` uit het framesjabloon van de module, `docs/frame/`): een kader met het\n  bijschrift in de taal erop gedrukt. Dit zijn de productafbeeldingen voor Addons; handleiding en\n  marketingblad gebruiken ze ook. Nooit uitzetten (`frame.enabled: false`) zonder reden van de gebruiker."
+        },
+        {
+            "type": "rule",
+            "id": "DOCS-09",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **DOCS-09 [T]** Het framesjabloon `docs/frame/` (`frame.html`, `frame.css`, eigen afbeeldingen/fonts) is\n  **van de gebruiker**. `docs init` maakt het één keer aan als kopie van het **hoofdframe** `branding/frame/` van de\n  werkruimte (merkkleuren, Poppins; de fonts komen mee in `docs/frame/assets/`), of zonder hoofdframe uit de\n  standaardstijlen van build-tools. Het hoofdframe zelf is ook van de gebruiker: aanpassingen voor toekomstige\n  modules gaan daar. Alleen zonder hoofdframe past Claude bij een **nieuwe** module de kleuren in `frame.css` (`:root`)\n  één keer aan op het merk. Daarna\n  verandert Claude niets in `docs/frame/`: niet overschrijven, niet opnieuw genereren, niet \"verbeteren\",\n  ook niet bij een nieuwe library-versie of een mislukte build. Alleen als de gebruiker om die wijziging\n  vraagt; anders meld je het probleem (bijv. te weinig contrast, ontbrekende afbeelding) en laat je het\n  sjabloon staan. Bewerkingen in `docs/frame/` vragen altijd toestemming (`.claude/settings.json`). Bekijk\n  na de build minstens één liggend en één staand frame met de Read-tool."
+        },
+        {
+            "type": "rule",
+            "id": "DOCS-10",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **DOCS-10 [T]** Bijschriften in `docs/content/<iso>/screenshots.json`, één per screenshot-id: `title`\n  3-80 tekens (voordeel eerst: wat de winkelier of klant ziet, geen technische naam), `text` optioneel, max.\n  220 tekens. Vertalen zoals de handleiding, daarna `docs mark-translated <iso> screenshots`. Nieuwe\n  screenshot in `docs.json`: `docs init` voegt een TODO-bijschrift toe."
+        },
+        {
+            "type": "rule",
+            "id": "DOCS-11",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DOCS-11** Handleiding, marketingteksten, bijschriften en BO-hulpteksten beloven geen opmaak die het thema bepaalt\n  (opsommingstekens, kleuren, iconen, lettertypes) als de module die stijl niet zelf zet: Classic en Hummingbird tonen\n  een `<ul>` bijvoorbeeld zonder opsommingstekens. Beschrijf de structuur (\"elke regel wordt een apart lijstitem\") en\n  controleer de bewering op de screenshots van beide thema's."
+        },
+        {
+            "type": "rule",
+            "id": "MKT-01",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **MKT-01 [T]** Categorie: precies één uit build-tools `resources/addons/categories.json`, voor\n  alle talen gelijk (`docs.json > marketing.category`)."
+        },
+        {
+            "type": "rule",
+            "id": "MKT-02",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **MKT-02 [T]** Prijsvoorstel tussen 49.99 en 4999.99 (max. 2 decimalen), onderbouwd met vergelijkbare\n  modules. Een gratis module die niet via Addons gaat (zoals de PrestaHaven Updater): `\"price\": 0` (het\n  marketingblad toont dan \"Free\"; module-dev-tools 1.24+)."
+        },
+        {
+            "type": "rule",
+            "id": "MKT-03",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **MKT-03 [T]** 1–3 voordelen als `\"Groep › Voordeel\"` uit `resources/addons/benefits.json`."
+        },
+        {
+            "type": "rule",
+            "id": "MKT-04",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **MKT-04 [T]** Multistore is altijd `\"Fully\"`, en de module is het ook echt (MS-01..17)."
+        },
+        {
+            "type": "rule",
+            "id": "MKT-05",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MKT-05** Features: 4–15 items, voordeel eerst, met de zoektermen uit `keywords` (SEO). Elk keyword\n  staat letterlijk in de beschrijving of de features."
+        },
+        {
+            "type": "rule",
+            "id": "MKT-06",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MKT-06** Prerequisites bij voorkeur leeg; \"Anything to add?\" noemt bekende incompatibiliteiten (of\n  \"No known incompatibilities.\")."
+        },
+        {
+            "type": "rule",
+            "id": "MKT-07",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool:docs"
+            ],
+            "markdown": "- **MKT-07 [T]** Logo's volgen het merk in `branding/` van de werkruimte: `brand.json` (magenta `#E31B87`, paars\n  `#802982`, stijlregels), `logo.svg` en de originelen in `branding/example/`. Een modulelogo is een **pictogram op een\n  transparante achtergrond** (het komt op de witte doos en op Addons), alleen in magenta en paars (wit voor kleine\n  accenten), vlak, in de geest van de isometrische merkblokken, zonder tekst, herkenbaar op 32 px. Per module: **drie**\n  suggesties `docs/content/logo-suggestions/1-<idee>.svg` … `3-<idee>.svg` (512 x 512) en `docs/content/logo-prompt.md`\n  (uit `branding/logo-prompt.template.md`, met de hex-codes letterlijk) voor een beeldgenerator of ontwerper. De\n  gebruiker kiest er één vóór de eerste `docs build` (frames, PDF's en de doos gebruiken het);\n  `ps-module docs logo <bestand>` maakt het `docs/content/logo.svg` en `logo.png` (512 x 512, transparant). `docs\n  build` zet de suggesties als PNG op het marketingblad; `docs check` waarschuwt bij minder dan drie of zonder prompt.\n  Het veld `logo_suggestion` in `marketing.json` beschrijft hetzelfde concept met de merkkleuren."
+        },
+        {
+            "type": "rule",
+            "id": "MKT-08",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool:docs"
+            ],
+            "markdown": "- **MKT-08 [T]** Elke module heeft een **cover**: de productdoos van het merk in perspectief met het logo van de module\n  op de voorkant en de naam (de technische naam zonder `heaven`, in hoofdletters) in de roze balk van de voorkant en op\n  de zijkant: `docs/marketing/cover.png` (3088 x 3214, transparant) + `cover-1000.png`, gemaakt door `ps-module docs\n  cover` en `docs build` uit `branding/box/box.json` (sjablonen en gemeten perspectief, `branding/box/README.md`). Het\n  logo ligt transparant op de doos; de strepen blijven eronder zichtbaar (`docs.json > cover.stripes`: `under`, `none`,\n  `over`). Een nieuw doos-sjabloon: opnieuw meten met `php branding/box/calibrate.php`."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

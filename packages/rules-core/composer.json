@@ -1,0 +1,46 @@
+{
+    "name": "prestashopheaven/build-rules-core",
+    "description": "Core of the Module-Factory rules registry: the rule schema, the loader that reads every rules package, the stage filter, the conventions.md generator and the ps-module rules command.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "George van Engers",
+            "email": "vanengers@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PrestaShopHeaven\\Build\\RulesCore\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PrestaShopHeaven\\Build\\RulesCore\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        },
+        "prestashopheaven": {
+            "kind": "build",
+            "use-when": "When a stage of the Module-Factory needs its rules as a checklist (ps-module rules stage <stage>), when a rule is added or changed (edit the JSON, then ps-module rules generate), or to check that every rule has a stage and a check.",
+            "keywords": [
+                "rules",
+                "conventions",
+                "registry",
+                "checklist",
+                "stage",
+                "gate",
+                "factory"
+            ]
+        }
+    },
+    "bin": [
+        "bin/rules.php"
+    ]
+}

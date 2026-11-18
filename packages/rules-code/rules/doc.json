@@ -1,0 +1,65 @@
+{
+    "number": "5b",
+    "title": "Documentatie",
+    "prefixes": [
+        "DOC"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "DOC-01",
+            "marker": "T",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "tool:conventions"
+            ],
+            "markdown": "- **DOC-01 [T]** Elke klasse, interface, trait en enum, en elke functie en methode (ook private,\n  ook upgrade-functies en overrides) heeft een docblock met een **omschrijving**: wat het doet\n  en, waar dat niet vanzelf spreekt, waarom. Alleen `@param`/`@return`-tags is niet genoeg.\n  `ps-module conventions` (onderdeel van `composer check`) controleert dit; tests zijn\n  uitgezonderd."
+        },
+        {
+            "type": "rule",
+            "id": "DOC-02",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DOC-02** `@param` en `@return` erbij als de types iets toevoegen: array-shapes\n  (`array<string, int>`), betekenis van een bool-resultaat, eenheden, of wat `null` betekent.\n  `@throws` voor exceptions die de aanroeper moet afhandelen."
+        },
+        {
+            "type": "rule",
+            "id": "DOC-03",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DOC-03** Properties en constanten met een niet-vanzelfsprekende betekenis krijgen een\n  korte docblock (`/** @var string[] messages of failed steps */`)."
+        },
+        {
+            "type": "rule",
+            "id": "DOC-04",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DOC-04** Comments in de code leggen het *waarom* uit (een PS 8/9-verschil, een\n  validatorregel, een bewuste keuze), niet wat de volgende regel doet."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

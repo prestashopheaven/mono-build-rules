@@ -1,0 +1,121 @@
+{
+    "number": "3",
+    "title": "Installeren, verwijderen en upgraden",
+    "prefixes": [
+        "INS"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "INS-01",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **INS-01** Hooks staan alleen in `ModuleDefinition::HOOKS`, configuratiesleutels met hun\n  standaardwaarde alleen in `ModuleDefinition::CONFIGURATION`, sleutels die een willekeurig\n  geheim krijgen (cron-/webhook-token) in `ModuleDefinition::GENERATED_CONFIGURATION`.\n  `Installer`/`Uninstaller`/`Upgrade` (runtime-kit) lezen daaruit via `hooks()`,\n  `configuration()`, `generatedConfiguration()` en `tabs()`. Backoffice-tabs staan in `ModuleDefinition::TABS` (recept\n  `admin-tab`). Geen losse `registerHook()`-aanroepen elders."
+        },
+        {
+            "type": "rule",
+            "id": "INS-07",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **INS-07** PrestaShop maakt tabs alleen bij installatie aan. Komt er in een upgrade een tab of\n  een beveiligde admin-route bij, maak de `Tab` dan in het upgrade-script aan (recept\n  `admin-tab`). Zonder tab faalt `is_granted`, ook voor de superadmin."
+        },
+        {
+            "type": "rule",
+            "id": "INS-02",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **INS-02** Configuratiesleutels: `<MODULE_NAME_UPPER>_<NAAM>`, bijvoorbeeld\n  `HEAVENFOO_FREE_LIMIT`. Uninstall verwijdert ze allemaal."
+        },
+        {
+            "type": "rule",
+            "id": "INS-03",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **INS-03** Elke stap in `Installer`/`Uninstaller` geeft `bool` terug en logt bij een fout\n  via `fail()`. Nooit stil doorgaan na een mislukte stap."
+        },
+        {
+            "type": "rule",
+            "id": "INS-04",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "tool:shops"
+            ],
+            "markdown": "- **INS-04** Uninstall laat geen sporen na: tabellen (down-migraties), configuratie,\n  bestanden die de module buiten de eigen map schreef. Tabs uit `$tabs` en hooks ruimt\n  PrestaShop zelf op."
+        },
+        {
+            "type": "rule",
+            "id": "INS-05",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **INS-05** Upgrade-scripts: `upgrade/upgrade-X.Y.Z.php` op basis van\n  `templates/upgrade-example.php`: `upgrade_module_X_Y_Z($module): bool` met alleen\n  `return Upgrade::apply($module, ['<timestamps van de nieuwe migraties>']);`. `Upgrade::apply()`\n  draait die migraties en registreert daarna alle hooks en ontbrekende config-sleutels uit\n  `ModuleDefinition`, zonder bestaande waarden te overschrijven. Zet een nieuwe hook of sleutel\n  dus alleen in `ModuleDefinition`; een verse installatie en een upgrade komen dan op hetzelfde\n  uit. De upgrade-tests (`ps-module shops run`) controleren precies dat."
+        },
+        {
+            "type": "rule",
+            "id": "INS-06",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **INS-06** Overrides installeert PrestaShop automatisch. Verander je een override in een\n  upgrade, roep dan `$module->uninstallOverrides()` en `$module->installOverrides()` aan in\n  het upgrade-script."
+        },
+        {
+            "type": "rule",
+            "id": "INS-08",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **INS-08** Verdwijnt er in een versie een bestand (klasse, template, controller, asset),\n  verwijder het dan in `upgrade/upgrade-X.Y.Z.php` (`is_file()` + `unlink()` binnen\n  `$module->getLocalPath()`). PrestaShop pakt de nieuwe zip over de oude map uit; oude\n  PHP-bestanden en controllers blijven anders bereikbaar."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

@@ -1,0 +1,197 @@
+{
+    "number": "1",
+    "title": "Structuur en naamgeving",
+    "prefixes": [
+        "STR"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "STR-01",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **STR-01 [V]** Technische naam = mapnaam = bestandsnaam van het hoofdbestand =\n  `$this->name`. Alleen `a-z0-9`, begint met een letter, minimaal 5 tekens, begint met de\n  prefix (`heaven`). Geen underscores: de validator staat ze toe, maar vertaaldomeinen\n  breken erop."
+        },
+        {
+            "type": "rule",
+            "id": "STR-02",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **STR-02 [V]** Hoofdklasse = technische naam met een hoofdletter (`Heavenfoo extends Module`)."
+        },
+        {
+            "type": "rule",
+            "id": "STR-03",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **STR-03 [V]** Elke map in de module bevat een `index.php` (de standaard-redirect).\n  `scaffold.php` en `ps-module validate` regelen en controleren dat; `vendor/` krijgt\n  ze bij `ps-module build`."
+        },
+        {
+            "type": "rule",
+            "id": "STR-13",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **STR-13 [V]** In de module-root staat een `.htaccess` die directe toegang tot `.php`, `.tpl`,\n  `.yml`, `.json` enz. blokkeert (de online validator eist hem). De template levert hem mee."
+        },
+        {
+            "type": "rule",
+            "id": "STR-04",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **STR-04 [V]** Er staat een `logo.png` in de root: vierkant PNG (de template gebruikt\n  200×200; PrestaShop's eigen modules gebruiken 140×140, de devdocs noemen minimaal 32×32).\n  De template heeft een testlogo dat later vervangen wordt."
+        },
+        {
+            "type": "rule",
+            "id": "STR-05",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **STR-05** Repo-indeling: `<repo_slug>/` (git-root met README, LICENSE, CI) bevat de\n  module-map `<module_name>/`. In de werkruimte staan alle module-repo's in `modules/` (`modules/<repo_slug>/`). Dev-configuratie (composer, phpstan, cs-fixer, phpunit)\n  staat in de module-map, omdat `vendor/` daar staat. `ps-module build` laat het eruit."
+        },
+        {
+            "type": "rule",
+            "id": "STR-06",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **STR-06** Mappen in de module (de indeling van `src/` volgt de lagen van DDD + CQRS, zie ARCH en\n  `architecture.md`):\n  - `src/` — alle PHP-klassen (PSR-4, namespace `PrestaShopHeaven\\<Naam>\\`)\n  - `src/Domain/<Context>/`, `src/Application/<Context>/`, `src/Infrastructure/` — de lagen (ARCH-01)\n  - `src/Install/ModuleDefinition.php` — hooks, configuratie, tabs, migraties (extends\n    `AbstractModuleDefinition` uit runtime-kit)\n  - `src/Module/Helper/` — traits met module-methodes (`Definition`, `ConfigForm`, `Widget`, …)\n  - `src/Module/Hook/` — één trait per hook, door de hoofdklasse ge-`use`d\n  - `src/Model/` — ObjectModel-klassen (niet in `src/Entity/`)\n  - `src/Entity/` — alleen Doctrine-entities, **plat** (geen submappen): PrestaShop laat Doctrine\n    elk PHP-bestand in deze map laden\n  - `src/Controller/Admin/`, `src/Form/`, `src/Grid/`, `src/Presenter/`, `src/Console/Command/`\n    (Symfony console commands), `src/Webservice/`, `src/ApiPlatform/` — presentatie (ARCH-09).\n    Geen `src/Repository/`, `src/Command/`, `src/Query/`, `src/Service/` of `src/Listener/` meer: die horen in de\n    lagen (repositories in `Infrastructure/Persistence`, commands en queries in `Application/<Context>/`)\n  - `controllers/front/`, `controllers/admin/` — legacy controllers (PS laadt ze op naam)\n  - `classes/` — klassen die PrestaShop in de globale namespace verwacht (bijv.\n    `WebserviceSpecificManagement*`), via een `classmap` in composer.json\n  - `override/` — alleen als het echt niet anders kan (zie recept `override`)\n  - `config/` — Symfony services: gedeelde services in `config/common.yml`, geïmporteerd door\n    `config/services.yml` (admin + console), `config/front/services.yml` (front) en `config/webservice/services.yml`\n    (webservice-container); `routes.yml`\n  - `migrations/up/`, `migrations/down/` — SQL-migraties\n  - `upgrade/` — `upgrade-X.Y.Z.php`\n  - `views/templates/{admin,front,hook}/`, `views/css/`, `views/js/`, `views/img/`, `views/fonts/`\n    **[V]**: de validator verwacht css/js/img/fonts/tpl precies op deze plekken\n  - `translations/`, `mails/<iso>/`\n  - `tests/Unit/` — PHPUnit (niet in de zip)"
+        },
+        {
+            "type": "rule",
+            "id": "STR-07",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **STR-07** Bestandsnamen van klassen zijn gelijk aan de klassenaam (PSR-4).\n  Templates en assets in `snake_case` of `kebab-case`, altijd lowercase."
+        },
+        {
+            "type": "rule",
+            "id": "STR-08",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **STR-08 [V]** Geen bestanden in de module die er niet in horen: geen `.DS_Store`,\n  `Thumbs.db`, `.idea`, `__MACOSX`, logbestanden, dumps, `node_modules`, testdata,\n  gegenereerde `config_xx.xml` of uitgeschakelde code."
+        },
+        {
+            "type": "rule",
+            "id": "STR-09",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **STR-09 [V]** De zip heet `<module_name>.zip` (zonder versie) en bevat precies één map\n  `<module_name>/`. `ps-module build` regelt dat."
+        },
+        {
+            "type": "rule",
+            "id": "STR-10",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **STR-10 [V]** Lever geen JS-libraries mee die PrestaShop al heeft (jQuery-plugins zoals\n  fancybox, scrollTo, datepicker…); `ps-module validate` waarschuwt ervoor."
+        },
+        {
+            "type": "rule",
+            "id": "STR-11",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **STR-11 [V]** Alle tekstbestanden zijn UTF-8 zonder BOM. Geen merge-conflictmarkers."
+        },
+        {
+            "type": "rule",
+            "id": "STR-12",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **STR-12 [V]** Maak je een nieuwe map in de module, zet er dan een `index.php` in (kopieer\n  die uit de module-root). `ps-module validate` meldt mappen zonder."
+        },
+        {
+            "type": "rule",
+            "id": "STR-14",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **STR-14** De technische naam verandert nooit na de eerste release (ook niet bij een rebrand):\n  Addons eist dezelfde naam in elke zip. Een nieuwe naam is een nieuwe module."
+        },
+        {
+            "type": "rule",
+            "id": "STR-15",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **STR-15** Geen `config.xml` in git. PrestaShop maakt hem zelf; mee in de zip mag alleen een\n  door `ps-module build` uit de hoofdklasse gegenereerde versie, zodat de waarden altijd gelijk zijn\n  aan de klasse. Nooit `config_<iso>.xml`."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

@@ -1,0 +1,101 @@
+{
+    "number": "22",
+    "title": "Git-werkwijze: branches, commits, PR's",
+    "prefixes": [
+        "GIT"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nGeldt voor elke module-repo (ook oudere zonder `module.spec.json`). Niet voor de packages in\n`libraries/`: die releasen vanaf `main` (PKG-05).\n"
+        },
+        {
+            "type": "rule",
+            "id": "GIT-01",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "tool:git"
+            ],
+            "markdown": "- **GIT-01** Elke feature of fix krijgt een eigen branch vanaf de bijgewerkte default branch\n  (`main`/`master`): `feature/<korte-naam>` of `fix/<korte-naam>` (kebab-case, Engels).\n  `vendor/bin/ps-module git start <naam> [--fix]` haalt eerst de default branch bij en neemt al gemaakte\n  wijzigingen mee. Op `main` wordt niet aan features gewerkt."
+        },
+        {
+            "type": "rule",
+            "id": "GIT-02",
+            "marker": "T",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **GIT-02 [T]** Herkent Claude dat een verzoek een nieuwe feature of fix start terwijl de repo op de\n  default branch staat, dan vraagt het **eerst** (AskUserQuestion) of het een branch maakt, en pas daarna\n  gaat het aan de slag. De UserPromptSubmit-hook geeft bij elke prompt de stand van de repo's mee; de\n  Stop-hook vraagt het alsnog als er toch wijzigingen op de default branch staan."
+        },
+        {
+            "type": "rule",
+            "id": "GIT-03",
+            "marker": "T",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **GIT-03 [T]** Is de feature klaar (definition of done groen), dan vraagt Claude achtereenvolgens, elk\n  pas na akkoord op de vorige: **committen** → **pushen + pull request** (GitHub, `ps-module git pr` via\n  `gh`) of **merge request** (GitLab, via push-opties) → **mergen** (squash) → **opruimen**\n  (`ps-module git finish`: terug naar de default branch, pullen, branch lokaal en op de remote verwijderen,\n  alleen als hij echt gemerged is). Tussendoor committen op de feature-branch mag altijd."
+        },
+        {
+            "type": "rule",
+            "id": "GIT-04",
+            "marker": "T",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **GIT-04 [T]** Claude pusht, maakt geen PR/MR en merget nooit zonder akkoord van de gebruiker. Zegt de\n  gebruiker \"later\" of \"nee\", dan stelt de Stop-hook dezelfde vraag pas opnieuw als de stand van de repo\n  verandert (nieuwe wijzigingen, commits, push, PR-status). `ps-module git later` legt dat ook expliciet vast."
+        },
+        {
+            "type": "rule",
+            "id": "GIT-05",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **GIT-05** Commitberichten: Engels, gebiedende wijs, één onderwerp per commit (REL-01). De PR-titel is het\n  eerste commitbericht van de branch; de beschrijving somt de commits op en meldt dat `composer verify`\n  groen is."
+        },
+        {
+            "type": "rule",
+            "id": "GIT-06",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **GIT-06** Een release (REL-01, REL-05): verhoog de versie op de feature-branch (of een\n  `release/X.Y.Z`-branch) en merge met **squash** en de titel `Release X.Y.Z - <omschrijving>`: de\n  release-workflow reageert op die commit op `main` en maakt tag en zip."
+        },
+        {
+            "type": "rule",
+            "id": "GIT-07",
+            "marker": "",
+            "stages": [
+                "release"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **GIT-07** De CI draait op elke push en elke PR (`ci.yml`); merge pas als die groen is. `ps-module git\n  status --remote` toont branch, wijzigingen, push-stand, PR en op te ruimen branches."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

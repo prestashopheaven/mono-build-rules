@@ -1,0 +1,173 @@
+{
+    "number": "17",
+    "title": "Testen op PrestaShop-winkels",
+    "prefixes": [
+        "TEST"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "TEST-01",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-01** Unit-tests (`tests/Unit/`) draaien zonder PrestaShop. Integratietests\n  (`tests/Integration/`) draaien ín een PrestaShop-container met een echte database; de runner\n  geeft ze hun eigen bootstrap. Behat (`<repo>/tests/behat/`) test van buitenaf via HTTP en heeft\n  een eigen `composer.json`, zodat de Symfony-versie van Behat niet botst met die van PrestaShop."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-02",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-02** `ps-module shops run` doet per PS-versie uit `testing.json`: winkel starten\n  (MySQL 8, dev-modus), installeren, rooktest van de belangrijkste pagina's (geen PHP-fouten),\n  integratietests, Behat, verwijderen (er mag niets achterblijven: geen tabellen, config,\n  hooks of tabs), opnieuw installeren, de echte release-zip installeren (gescopete vendor) en\n  verwijderen, en upgrade-tests."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-03",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-03** Upgrade-tests: voor elke eerdere release-tag (`upgrade_from: all`) of alleen de\n  laatste (`previous`) installeert de runner die versie, zet de huidige code erover, draait de\n  upgrade, en vergelijkt het resultaat met een verse installatie: versie, hooks,\n  config-sleutels, tabs en tabelschema's moeten gelijk zijn."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-07",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-07** `ps-module shops run` doet ook een backoffice-rooktest: inloggen, dashboard, Module\n  Manager, de configuratiepagina van de module, de menu-links van de module en een\n  product-bewerkpagina. Elk moet 200 geven zonder PHP-fouten. Formulieren opslaan, grids en\n  JavaScript test je zelf met integratietests of Behat."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-06",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-06** Let op de verschillen tussen de Docker-images: PS 8.1.0 draait Classic met Smart cache\n  (CCC) uit, PS 9.2.0 draait **Hummingbird** met CCC aan. Assets zijn daar gebundeld: test op de\n  inhoud van de gelinkte CSS/JS, niet op bestandsnamen in de HTML (zie recept `front-assets`)."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-04",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-04** De winkels draaien op MySQL 8, niet op MariaDB, zodat MariaDB-only SQL (DB-03)\n  meteen faalt."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-05",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-05** Docker is nodig voor TEST-01 (integratie/Behat) t/m TEST-04. `ps-module shops doctor`\n  controleert dat. Zonder Docker blijven alleen de statische checks en unit-tests over."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-08",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-08** Per major draaien de winkeltests op de aanbevolen PHP-versie: PS 8.x op PHP 8.1, PS 9.0\n  op 8.4, PS 9.1+ op 8.5 (image-tag in `testing.json`)."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-09",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-09** Elke FO-functie wordt getest op Classic (PS 8.x/9.x) én Hummingbird (PS 9.x) en op\n  mobiele breedte (375 px). Die screenshots zijn de basis voor de Addons-pagina (DOCS)."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-10",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-10** Compatibiliteitsmatrix voor een release van een FO-module: Classic en Hummingbird, de\n  native ps_onepagecheckout (9.2+) en ps_facetedsearch draaien automatisch in Docker; een\n  OPC-module, een page-cache-module (JPresta of LiteSpeed), ps_checkout of Mollie en \"Overrides\n  uitschakelen = Ja\" via de checklist in `README.md`."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-11",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-11** Integratietests draai je alleen via `vendor/bin/ps-module shops integration|run|multistore` (als\n  `www-data` in de winkel). `phpunit` als root via `docker exec` maakt cachebestanden van root en breekt de winkel.\n  `composer verify` en `shops run` gaan uit van verse winkels: draai na `shops multistore` eerst `shops down all`.\n  Elke module heeft een eigen poortbereik (`testing.json > base_port`, uit de modulenaam), zodat winkels van\n  meerdere modules naast elkaar kunnen draaien. De poorten (`base_port` + 100 x major + 10 x minor + patch) liggen buiten\n  de bereiken die Windows reserveert (`netsh interface ipv4 show excludedportrange protocol=tcp`; bijv. 53912-54011):\n  daar weigert Docker te starten (\"bind: … forbidden by its access permissions\", gevonden 2026-11-07)."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-12",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-12** De winkels draaien in dev-modus: een niet-canonieke URL (bijv. een productlink met een andere\n  `link_rewrite` of `index.php?controller=product&id_product=1`) geeft dan geen redirect maar een pagina \"[Debug] This\n  page has moved\" met HTTP 200 en een link. Een HTTP- of Behat-test volgt die link zelf (zoek\n  `This page has moved.*?<a href=\"([^\"]+)\"`) of vraagt de canonieke URL op met `Link::getProductLink()`."
+        },
+        {
+            "type": "rule",
+            "id": "TEST-13",
+            "marker": "",
+            "stages": [
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TEST-13** HTTP-tests van backoffice-pagina's gebruiken de helpers van build-testing-php (`PrestaShopHeaven\\Build\\TestingPhp\\Http`):\n  `backOfficeSession()`, `moduleConfigurationPage()`, `productEditPage()`, en voor formulieren `symfonyForm()`\n  (eenvoudige pagina's) of `formFields()` + `encodeFields()` (DOMDocument: de productpagina en elke pagina met\n  `<template>`-elementen of herhaalde veldnamen). In de multistore-ronde opent een pagina die één winkel nodig heeft\n  (de productpagina) in context \"Alle winkels\" een winkelkeuze in plaats van het formulier: de test kiest de winkel met\n  `setShopContext=s-<id>` (`productEditPage()` doet dat). `\\Shop::getShops(true, null, true)` is geïndexeerd op\n  winkel-id: gebruik `array_values()` voordat je `[0]` neemt."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

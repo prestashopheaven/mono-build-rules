@@ -1,0 +1,101 @@
+{
+    "number": "26",
+    "title": "Interne testwinkel",
+    "prefixes": [
+        "TS"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nEén PrestaShop 9.2.0 in Docker die altijd draait (`MODULES/test-site/`, README daar), met de nieuwste release van elke\nmodule en testgegevens per module, zodat de gebruiker meteen met de hand kan testen. Mails gaan naar Mailpit.\n"
+        },
+        {
+            "type": "rule",
+            "id": "TS-01",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TS-01** Elke module heeft `<repo>/test-site/setup.php`: de testgegevens voor de interne testwinkel. Buiten de\n  module-map, dus niet in de zip en niet in de DoD-vingerafdruk. Hij draait in de winkel met PrestaShop, de kernel en\n  de `ts_*()`-helpers van `test-site/container/lib.php`, krijgt `$languages`, `$shops`, `$dir` en `$docsSetup`, en geeft\n  `['summary' => …, 'scenarios' => [[title, steps, links]], 'cron' => [...]]` terug (de scenario's staan op\n  http://localhost:8080/test-site/)."
+        },
+        {
+            "type": "rule",
+            "id": "TS-02",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TS-02** Elke functie en elk randgeval van de module krijgt testdata en een scenario: wat je doet en wat je hoort te\n  zien, met directe links (product, bestelling, configuratie, Mailpit). Gebruik beide winkels (eigen instellingen in\n  Shop 2) zodat multistore te testen is. Bestellingen met `ts_order('<sleutel>', …)`: één keer geplaatst, de mails\n  staan dan in Mailpit."
+        },
+        {
+            "type": "rule",
+            "id": "TS-03",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TS-03** Idempotent: alles wordt teruggevonden op een vaste sleutel (referentie `TS-<XX>-n`, e-mail, naam) en terug\n  in de beschreven staat gezet; nooit dubbel. Geen persoonsgegevens, geen externe URL's, geen geheimen."
+        },
+        {
+            "type": "rule",
+            "id": "TS-04",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TS-04** Werk `test-site/setup.php` bij in dezelfde branch als de wijziging aan de module (nieuwe instelling,\n  functie of randgeval = nieuwe of aangepaste testdata en scenario's). Probeer hem met\n  `php test-site/test-site.php fixtures <module> --working` (vanuit `MODULES/`); hij moet zonder fout draaien."
+        },
+        {
+            "type": "rule",
+            "id": "TS-05",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TS-05** De winkel volgt vanzelf: de Stop-hook (`.claude/hooks/test-site-sync.php`) start op de achtergrond\n  `test-site.php sync` als de winkel draait: nieuwe GitHub-release → installeren of upgraden; `test-site/` op `main`\n  gewijzigd → testgegevens opnieuw. Met de hand: `php test-site/test-site.php sync`."
+        },
+        {
+            "type": "rule",
+            "id": "TS-06",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TS-06** Een module-cron (console command dat een echte winkel periodiek draait) staat in `'cron'` van de setup: de\n  cron-container draait hem elke minuut."
+        },
+        {
+            "type": "rule",
+            "id": "TS-07",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TS-07** De demowinkel krijgt dezelfde testgegevens (`php test-site/test-site.php demo`, ook in elke `sync` en dus\n  via de Stop-hook): voor elke module die in de demo staat (`publish demo`) en waarvan de testgegevens lokaal slagen,\n  zodra de testgegevens op `main` of de demoversie veranderen. Eén `ps-module demo-site apply` (test ervoor en erna,\n  database terug bij een fout, nieuwe demo- en VPS-snapshot). Testgegevens zijn dus **publiek**: geen interne notities,\n  geen echte namen, alles werkt ook met één winkel (`$shop2` valt terug op 1) en zonder e-mail (scenario's die Mailpit\n  noemen, zeggen wat je in de interne testwinkel ziet)."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

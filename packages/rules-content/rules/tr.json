@@ -1,0 +1,197 @@
+{
+    "number": "8",
+    "title": "Vertalingen",
+    "prefixes": [
+        "TR"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "TR-01",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool:translations"
+            ],
+            "markdown": "- **TR-01** Het nieuwe vertaalsysteem: `isUsingNewTranslationSystem()` geeft `true` terug,\n  en teksten gaan via `$this->trans('Text', [], 'Modules.<Klasse>.<Domein>')`."
+        },
+        {
+            "type": "rule",
+            "id": "TR-02",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool:translations"
+            ],
+            "markdown": "- **TR-02** Domeinen: `Admin` (backoffice), `Shop` (frontoffice), `Emails` (mails).\n  De `<Klasse>` is de modulenaam met een hoofdletter: `Modules.Heavenfoo.Admin`."
+        },
+        {
+            "type": "rule",
+            "id": "TR-03",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TR-03** Brontaal is Engels. Geen variabelen in de vertaalsleutel: gebruik placeholders\n  (`'%count% items'` met `['%count%' => $n]`)."
+        },
+        {
+            "type": "rule",
+            "id": "TR-04",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TR-04** Gebruik in klassen buiten de hoofdklasse de Symfony-`TranslatorInterface`\n  (via dependency injection) of `Context::getContext()->getTranslator()`."
+        },
+        {
+            "type": "rule",
+            "id": "TR-05",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TR-05** De module levert vertaalbestanden voor elke taal uit `<repo>/i18n.json` (TR-08).\n  Standaard: en, fr, es, it, pl, de, nl, pt, ru."
+        },
+        {
+            "type": "rule",
+            "id": "TR-07",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TR-07** Oude vertaalbestanden (`translations/<iso>.php`, `$this->l()`) gebruiken\n  `md5(brontekst)` als sleutel. Verander je een Engelse tekst, zet dan de sleutel in alle\n  vertaalbestanden om (anders valt de vertaling terug op Engels). Nieuwe modules gebruiken het\n  nieuwe vertaalsysteem (TR-01)."
+        },
+        {
+            "type": "rule",
+            "id": "TR-06",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TR-06** PS 9: `trans()` en `{l}` escapen niet meer. Escape de uitvoer dus zelf (TPL-01)."
+        },
+        {
+            "type": "rule",
+            "id": "TR-08",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **TR-08 [T]** De talen staan in `<repo>/i18n.json` (`source` + `languages`, ISO-codes uit\n  build-tools `resources/languages.json`, 33 beschikbaar). Elke ingeschakelde taal is volledig\n  vertaald: `ps-module translations check` (onderdeel van `composer check`) faalt anders."
+        },
+        {
+            "type": "rule",
+            "id": "TR-09",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **TR-09 [T]** Teksten en domeinen zijn letterlijke strings, zodat ze te extraheren zijn:\n  `trans('Text', [], 'Modules.<Klasse>.Admin')`, `{l s='Text' d='…'}`, `'Text'|trans({}, '…')`.\n  Ook het domein dus nooit als constante (`self::DOMAIN`) of variabele: de extractor van PrestaShop slaat zo'n aanroep\n  over (de check meldt het als fout).\n  Een bewust dynamische aanroep (een sleutel doorgeven die elders letterlijk staat) krijgt een comment\n  `translations-ignore: <reden>` op dezelfde regel of erboven. Een core-domein (`Admin.Actions`, …)\n  alleen voor teksten die PrestaShop zelf heeft; de check waarschuwt anders."
+        },
+        {
+            "type": "rule",
+            "id": "TR-10",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **TR-10 [T]** Vertalingen staan in de catalogus `<repo>/i18n/<iso>.json` (domein → Engelse tekst →\n  vertaling). Bewerk alleen de catalogus, nooit de XLF. `ps-module translations build` maakt\n  `translations/<locale>/<DomeinZonderPunten>.<locale>.xlf` (+ `index.php`); de check faalt als de\n  XLF niet bij de catalogus past."
+        },
+        {
+            "type": "rule",
+            "id": "TR-11",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **TR-11 [T]** Een vertaling houdt dezelfde placeholders (`%name%`, `%s`/`%1$s`), tag-markers\n  (`[1]…[/1]`) en HTML-tags als de bron."
+        },
+        {
+            "type": "rule",
+            "id": "TR-12",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TR-12** Werkwijze: `translations status` → `fill` (gedeelde glossary) → `todo\n  --out=../.cache/i18n-todo.json`, zelf vertalen (Admin = winkelier, Shop = klant), `apply`. Met\n  `DEEPL_API_KEY` in `.env` kan `auto` invullen; die vertalingen zijn `machine` tot ze nagekeken zijn\n  (`todo --with-machine` of `accept`). Verouderde teksten: `prune`."
+        },
+        {
+            "type": "rule",
+            "id": "TR-13",
+            "marker": "T",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **TR-13 [T]** Mails: `mails/en/` is de bron; elke taal heeft `mails/<ps_iso>/` met dezelfde bestanden\n  en `{variabelen}` (PrestaShop-ISO: Sloveens `si`, Vietnamees `vn`). Na een wijziging in `mails/en/`:\n  vertaling bijwerken, dan `translations mails-ok <iso>`. Onderwerpen via\n  `trans(…, 'Modules.<Klasse>.Emails', $locale)`."
+        },
+        {
+            "type": "rule",
+            "id": "TR-14",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TR-14** Generieke teksten die veel modules gebruiken, horen in\n  `resources/translations/glossary.json` van build-tools, vertaald in alle 33 talen (PKG-01)."
+        },
+        {
+            "type": "rule",
+            "id": "TR-15",
+            "marker": "",
+            "stages": [
+                "content"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TR-15** PrestaShop cachet de vertaalcatalogus in `var/cache/<env>/translations`. Na een upgrade\n  met nieuwe of gewijzigde teksten leegt het upgrade-script die cache niet vanzelf: noem in de\n  release notes dat de winkelier de cache leegt (of doe `Tools::clearSf2Cache()` in het upgrade-script)."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

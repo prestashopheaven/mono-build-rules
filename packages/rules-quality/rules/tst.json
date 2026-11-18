@@ -1,0 +1,307 @@
+{
+    "number": "14",
+    "title": "Tests",
+    "prefixes": [
+        "TST"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "TST-01",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-01** Unit-tests in `tests/Unit/` voor alle logica in `src/` die geen database nodig\n  heeft (berekeningen, validatie, mapping)."
+        },
+        {
+            "type": "rule",
+            "id": "TST-02",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-02** Testklassen eindigen op `Test` en volgen dezelfde namespace als de klasse onder test,\n  met `\\Tests\\Unit` ertussen."
+        },
+        {
+            "type": "rule",
+            "id": "TST-03",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-03** Unit-tests mogen niet afhangen van een draaiende PrestaShop of database. Heb je\n  PrestaShop-klassen nodig, isoleer die dan achter een interface of gebruik mocks; wat echt PrestaShop nodig heeft,\n  test je in een integratietest (TST-07)."
+        },
+        {
+            "type": "rule",
+            "id": "TST-04",
+            "marker": "T",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "tool:tests"
+            ],
+            "markdown": "- **TST-04 [T]** **Alles wordt getest, letterlijk alles.** Elke module heeft unit-tests én integratietests. Elke klasse,\n  trait en enum in `src/`, `controllers/` en `classes/` heeft een eigen testbestand dat hem gebruikt:\n  `src/<pad>/<Naam>.php` → `tests/Unit/<pad>/<Naam>Test.php` en/of `tests/Integration/<pad>/<Naam>Test.php`;\n  `controllers/front/<naam>.php` → `tests/Integration/Controllers/Front/<Naam>Test.php`; `classes/<Naam>.php` →\n  `tests/Integration/Classes/<Naam>Test.php`. Ook een Result, een exception of een trait. Alleen interfaces (geen code)\n  en `index.php` niet. Het testbestand noemt de klasse of trait bij naam (een trait test je via een host-klasse\n  `new class { use X; }` of via de hoofdklasse met `class_uses()`). Domain, Application en Presenter test je met unit-tests; Infrastructure en de rest van de\n  presentatie (repositories, adapters, hooks, controllers, formulieren) met integratietests in een echte winkel."
+        },
+        {
+            "type": "rule",
+            "id": "TST-05",
+            "marker": "T",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "tool:tests"
+            ],
+            "markdown": "- **TST-05 [T]** Elke publieke en protected methode (ook statische en named constructors, niet `__construct`) wordt in\n  dat testbestand aangeroepen of genoemd (`->methode(`, `::methode(`, een hooknaam als `'displayHome'` voor\n  `hookDisplayHome`, of `testMethode…`). Private methodes test je via de publieke (TST-08 meet dat voor de unit-lagen)."
+        },
+        {
+            "type": "rule",
+            "id": "TST-06",
+            "marker": "T",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "tool:tests"
+            ],
+            "markdown": "- **TST-06 [T]** **Fouten testen we altijd.** Elke exception die een klasse gooit, verwacht een test met de foute invoer\n  die hem veroorzaakt: `$this->expectException(X::class)` (plus `expectExceptionCode()` bij codes). Een methode die op\n  ongeldige invoer geen exception gooit maar die stilletjes accepteert, is een fout in de methode: maak er een value\n  object of een controle met exception van (bijv. een `pow()` die bij een negatieve exponent op 0 deelt: test\n  `pow(0, -1)` en verwacht `\\DivisionByZeroError`/een eigen exception).\n  Presentatiecode die een fout beantwoordt (403/422/500, een flash-melding) gooit geen exception om hem in dezelfde\n  methode weer te vangen: ze antwoordt direct. \"Immutable\" test je met `ReflectionProperty::isReadOnly()`, niet door een\n  property te overschrijven (PHPStan analyseert ook de tests)."
+        },
+        {
+            "type": "rule",
+            "id": "TST-07",
+            "marker": "T",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "tool:tests"
+            ],
+            "markdown": "- **TST-07 [T]** Elk domein (bounded context) is integratiegetest: elke command en query wordt in `tests/Integration`\n  minstens één keer via de bus tegen een echte winkel gedispatcht (`new <Naam>Command(…)` / `new <Naam>Query(…)`),\n  inclusief multistore (een eigen waarde per winkel en weer erven) waar het winkelgebonden data is."
+        },
+        {
+            "type": "rule",
+            "id": "TST-08",
+            "marker": "T",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "tool:coverage"
+            ],
+            "markdown": "- **TST-08 [T]** De unit-tests voeren **elke regel** van `src/Domain`, `src/Application` en `src/Presenter` uit: elke\n  methode, elke tak en elk foutpad (`throw`). `ps-module check` (en `ps-module coverage`) meet dat met PCOV of Xdebug\n  (100 % regeldekking; een coverage-driver is verplicht, in CI `coverage: pcov`)."
+        },
+        {
+            "type": "rule",
+            "id": "TST-09",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-09** Per methode test je **alle scenario's**: de normale gevallen, de grenzen (0, 1, leeg, maximum, maximum + 1,\n  negatief, afronding, valuta zonder decimalen, andere taal/winkel) en elke foute invoer (verkeerd type als string,\n  te lang, leeg, `null`, onbekende id, ontbrekende rechten). Gebruik data providers voor rijen gevallen. Schrijf de\n  fouttests eerst: wat moet de methode weigeren? Daar wordt de methode beter van."
+        },
+        {
+            "type": "rule",
+            "id": "TST-10",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-10** Een test test één gedrag, met een naam die het gedrag beschrijft (`testRejectsANegativeThreshold`), en\n  controleert de uitkomst (waarden, opgeslagen data, gegooide exception), niet alleen dat er \"niets misging\".\n  Geen tests overslaan zonder reden (`markTestSkipped()` alleen met de reden erbij, bijv. multistore uit)."
+        },
+        {
+            "type": "rule",
+            "id": "TST-11",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-11** JavaScript en TypeScript: elke functie wordt getest, met dezelfde regels (alle scenario's, fouten\n  verwacht met `toThrow`); afgedwongen door `ps-module assets` (zie de JS-testregels hieronder en het recept\n  `typescript`)."
+        },
+        {
+            "type": "rule",
+            "id": "TST-12",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-12** Een bug krijgt eerst een test die faalt, daarna de fix."
+        },
+        {
+            "type": "rule",
+            "id": "TST-13",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-13** Een integratietest die een PrestaShop-object met SQL wijzigt (`\\Db::update('orders', …)`), leegt daarna de\n  ObjectModel-cache van die klasse: `\\Cache::clean('objectmodel_Order_*')`, ook in de `finally` die het terugzet.\n  `new \\Order($id)` geeft anders binnen hetzelfde proces de eerder geladen kopie, en de test meet de oude waarde\n  (gevonden in de multistore-ronde van `heavenattachmentmailer`, 2026-10-22). Beter nog: wijzig via het ObjectModel."
+        },
+        {
+            "type": "rule",
+            "id": "TST-14",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-14** Een testobject met winkelkoppeling (taal, carrier, …) verwijder je in multistore voor **alle** winkels:\n  `\\Shop::setContext(\\Shop::CONTEXT_ALL)` en `$object->id_shop_list = <alle winkel-id's>` vóór `delete()`.\n  `ObjectModel::delete()` haalt anders alleen de winkels van de context weg en houdt het object zolang een andere winkel\n  het heeft (`Language::delete()` ruimt zelfs alleen in `CONTEXT_ALL` op). Gevonden in `heavenlangimages` (2026-10-24):\n  de testtaal bleef actief in winkel 2 en 3, hun homepage stuurde door naar `/<winkel>/en/` (302) en de\n  multistore-controle \"front office shows the value of its own shop\" faalde."
+        },
+        {
+            "type": "text",
+            "markdown": "\nJavaScript en TypeScript (TST-20..29, uitwerking van TST-11; uitzondering voor derden: TST-27):\n"
+        },
+        {
+            "type": "rule",
+            "id": "TST-20",
+            "marker": "T",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "tool:assets"
+            ],
+            "markdown": "- **TST-20 [T]** Elke module met eigen JavaScript (`views/js/**/*.js`, met de hand of gebouwd) heeft de testopzet in\n  `<module>/_dev/` (optioneel deel `templates/optional/js-tests`, bij `typescript` aangevuld door dat recept):\n  Vitest + jsdom, tests in `_dev/tests/**/*.test.{js,ts}`. JS zonder `_dev/package.json` laat `ps-module assets\n  check` falen. Node.js 22.13+ is dan nodig om te testen; controleren kan zonder Node."
+        },
+        {
+            "type": "rule",
+            "id": "TST-21",
+            "marker": "T",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **TST-21 [T]** Dekking **100 % per bestand** voor regels, statements, functies én branches: elke functie, ook elke\n  callback (`.catch(() => …)`, event-handlers) en elke kant van elke `if`, `&&`, `?.`, `??` en ternary wordt door een\n  test uitgevoerd. Gemeten over de TypeScript-bronnen (`_dev/front`, `_dev/back`) of over elk script in `views/js/`.\n  Een bestand dat geen test laadt telt als 0 %. `/* v8 ignore */` alleen met een comment waarom het niet te testen\n  is én akkoord van de gebruiker (TOOL-01)."
+        },
+        {
+            "type": "rule",
+            "id": "TST-22",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-22** Scripts zonder exports (IIFE's in `views/js/`, entries in `_dev/front|back`) test je van buitenaf, zoals\n  de browser ze draait: DOM opbouwen, globals neerzetten met `tests/support/shop.js` (`installPrestashop`,\n  `installJQuery`, `installAdminComponents`), het script laden met `runScript(() => import('…'))` (opnieuw per test),\n  `fetch` stubben (`vi.stubGlobal`), events afvuren en het resultaat in de DOM controleren. Exporteer geen\n  testhaakjes naar `window` (TPL-05). Functies in `lib/` test je ook direct."
+        },
+        {
+            "type": "rule",
+            "id": "TST-23",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-23** **Foute waarden en fouten testen we altijd**, per functie: ontbrekende of kapotte markup, ontbrekende\n  globals (`window.prestashop`, `jQuery`, `component`), foute types (`'abc'`, `NaN`, negatief, te groot), lege of\n  ongeldige serverantwoorden (HTTP-fout, geen JSON, `null`), netwerkfouten en oude browsers (geen\n  `AbortController`). Gooit een functie bij foute invoer, dan verwacht de test dat exact: `expect(() => f(x)).toThrow(RangeError)`\n  of `await expect(p).rejects.toThrow(...)`. Vangt de code een fout bewust af, dan test je het gedrag daarna (de\n  balk blijft staan, het element wordt verborgen)."
+        },
+        {
+            "type": "rule",
+            "id": "TST-24",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-24** Tests controleren het zichtbare resultaat (tekst via `textContent`, attributen, aanroepen van `fetch`\n  of `initComponents` met hun argumenten), en ook wat níet mag gebeuren: geen HTML-injectie (`<img onerror>` blijft\n  tekst), geen dubbele binding na een herinit, niets doen op de verkeerde pagina."
+        },
+        {
+            "type": "rule",
+            "id": "TST-25",
+            "marker": "T",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **TST-25 [T]** `ps-module assets build` (= `npm ci` + `npm run build`) draait typecheck (TypeScript, ook de tests),\n  lint, de tests met dekking en de build, en schrijft `_dev/build-manifest.json` alleen als alles slaagt. `assets\n  check` (`composer check`, DoD-stap `assets`, `ps-module verify`) faalt zodra bronnen, tests, configuratie of een\n  script in `views/js/` daarna veranderd zijn, of als er een script bij kwam dat niet in die run zat."
+        },
+        {
+            "type": "rule",
+            "id": "TST-26",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-26** Elke test begint als een nieuwe pagina: `tests/support/setup.js` haalt na elke test de listeners op\n  `document`/`window`, de PrestaShop-globals en de body weg; mocks en gestubde globals herstelt Vitest\n  (`restoreMocks`, `unstubGlobals`). Een test hangt nooit af van de volgorde of van een andere test."
+        },
+        {
+            "type": "rule",
+            "id": "TST-27",
+            "marker": "T",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "tool:conventions"
+            ],
+            "markdown": "- **TST-27 [T]** Uitzondering: **bibliotheken van derden** in `views/js/vendor/<bibliotheek>/` hoeven geen tests en tellen\n  niet mee voor dekking, lint en het build-manifest. Voorwaarden: één map per bibliotheek, met het licentiebestand van\n  die bibliotheek ernaast (`LICENSE`, `LICENCE` of `COPYING`, met of zonder extensie; `ps-module conventions` faalt\n  zonder), de code ongewijzigd en de licentie verenigbaar met verkoop op Addons (MIT, BSD, Apache-2.0 e.d.; geen GPL).\n  Eigen code hoort daar nooit; ook geen eigen aanpassing van zo'n bibliotheek: schrijf een eigen script eromheen dat\n  wél getest wordt. Met TypeScript gaat een bibliotheek liever via npm in de bundel. Zet een `index.php` in elke map\n  (STR-03) en noem bibliotheek, versie en licentie in de README. De css van de bibliotheek mag in dezelfde map.\n  Wat de validator doet (online getest, zie `validator-rules.md`): in een map `lib`, `libs`, `vendor` of `vendors`\n  slaat hij de licentieheader en de structuurcheck over, dus de bibliotheek blijft ongewijzigd (geen eigen header\n  nodig). Maar `eval(` (ook in een comment) en een bibliotheek die PrestaShop al meelevert (`jquery.fancybox.js`…)\n  blijven fouten: kies dan een andere bibliotheek of de core-versie. JavaScript in een andere `lib/`-, `libs/`-,\n  `vendor/`- of `vendors/`-map laat `ps-module conventions` falen, want daar zou eigen code zijn headercheck verliezen."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

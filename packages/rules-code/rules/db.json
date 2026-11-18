@@ -1,0 +1,147 @@
+{
+    "number": "4",
+    "title": "Database en migraties",
+    "prefixes": [
+        "DB"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": "\nMigraties draaien via `SqlMigrations`/`Migrator` van runtime-kit (vroeger `vanengers/prestashop-library-product-admin-helper`).\n"
+        },
+        {
+            "type": "rule",
+            "id": "DB-01",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DB-01** Bestandsnaam: `<YYYYMMDDHHMM> - <Type> - <onderwerp>.sql` (onderwerp: `[a-z0-9_-]`,\n  geen spaties, bijv. `item-position`) in `migrations/up/`\n  en voor `C`- en `A`-migraties een tegenhanger met **dezelfde timestamp** in\n  `migrations/down/`. Type: `C` = create, `A` = alter, `D` = drop, `I` = insert/seed,\n  `U` = update van data. Elke timestamp is uniek per map (twee bestanden met dezelfde\n  timestamp overschrijven elkaar stil in de index van de library). Uninstall draait de\n  down-map oplopend, dus de down van een latere `A` vindt de tabel vaak al verwijderd: maak die\n  idempotent met `DROP TABLE IF EXISTS` van dezelfde tabel."
+        },
+        {
+            "type": "rule",
+            "id": "DB-02",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DB-02** Tabelnamen met `{_DB_PREFIX_}` en de modulenaam: `{_DB_PREFIX_}heavenfoo_item`.\n  Gebruik nooit een bestaande PrestaShop-tabelnaam."
+        },
+        {
+            "type": "rule",
+            "id": "DB-03",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **DB-03** Up-migraties zijn idempotent: `CREATE TABLE IF NOT EXISTS`. Down-migraties ook:\n  `DROP TABLE IF EXISTS`. `ADD COLUMN IF NOT EXISTS` werkt alleen op MariaDB, niet op\n  MySQL. Gebruik het daarom alleen in een upgrade-script, en controleer daar eerst zelf of de\n  kolom bestaat."
+        },
+        {
+            "type": "rule",
+            "id": "DB-04",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DB-04** Tabellen: `ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,\n  primaire sleutel `id_<entiteit>` `INT UNSIGNED NOT NULL AUTO_INCREMENT`, verwijzingen naar\n  PrestaShop-entiteiten als `id_product INT UNSIGNED NOT NULL` met een index,\n  `date_add`/`date_upd DATETIME NOT NULL` als het een ObjectModel is."
+        },
+        {
+            "type": "rule",
+            "id": "DB-05",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DB-05** Geen foreign-key-constraints naar PrestaShop-tabellen (oude winkels hebben soms\n  MyISAM of afwijkende kolomtypes, en import-/opschoontools werken met `FOREIGN_KEY_CHECKS=0`).\n  Ruim eigen rijen op via `actionObject<Klasse>DeleteAfter`. `runAll()` draait de down-map ook in\n  oplopende volgorde, dus constraints tussen eigen tabellen geven bij uninstall problemen. Wil je\n  ze toch, laat dan de down-migratie van de child-tabel een vroegere timestamp hebben."
+        },
+        {
+            "type": "rule",
+            "id": "DB-06",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DB-06** De migratieklasse splitst op `;`. Gebruik dus geen `;` binnen strings, en\n  **geen SQL-commentaar** (een stuk dat alleen commentaar is, wordt als lege query uitgevoerd\n  en faalt). Triggers zijn sowieso verboden door de validator."
+        },
+        {
+            "type": "rule",
+            "id": "DB-07",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DB-07** Multistore/meertalig: `_shop`- en `_lang`-tabellen volgens het\n  PrestaShop-patroon (`id_<entiteit>`, `id_shop` / `id_lang` als samengestelde sleutel)."
+        },
+        {
+            "type": "rule",
+            "id": "DB-08",
+            "marker": "V",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **DB-08 [V]** Queries in PHP: gebruik `DbQuery` of `Db::getInstance()` en escape *elke*\n  waarde: `(int)` voor id's en getallen, `(float)` voor bedragen, `pSQL()` voor strings,\n  `bqSQL()` voor tabel- en kolomnamen. Geen string-concatenatie met ongevalideerde invoer.\n  Let op: `Db::insert()` en `Db::update()` escapen de waarden **niet**; geef ze `pSQL()`/cast-waarden.\n  `pSQL($x)` haalt ook HTML-tags weg (`strip_tags`): tekst die `<` mag bevatten (`5 < 10`, of testdata die precies zo\n  terug moet komen) gaat met `pSQL($x, true)`; weiger HTML dan zelf in het value object.\n  Lijsten: `IN (' . implode(',', array_map('intval', $ids)) . ')'` en voor strings\n  `IN ('\" . implode(\"','\", array_map('pSQL', $values)) . \"')`; controleer eerst dat de lijst niet\n  leeg is (`IN ()` is een SQL-fout)."
+        },
+        {
+            "type": "rule",
+            "id": "DB-09",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DB-09** Lezen via `Db::getInstance(_PS_USE_SQL_SLAVE_)`, schrijven via `Db::getInstance()`.\n  Gebruik `insert()`/`update()`/`delete()` van `Db` waar dat kan."
+        },
+        {
+            "type": "rule",
+            "id": "DB-10",
+            "marker": "",
+            "stages": [
+                "design",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DB-10** Geen queries of `new <ObjectModel>()` in een lus over producten, orders of regels:\n  haal alles in één query (JOIN, `IN (...)`) en pagineer (`LIMIT`). Elke kolom waarop je filtert of\n  joint krijgt een index (de validator meldt ontbrekende indexen)."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

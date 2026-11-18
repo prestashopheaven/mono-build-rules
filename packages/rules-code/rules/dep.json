@@ -1,0 +1,108 @@
+{
+    "number": "13",
+    "title": "Dependencies",
+    "prefixes": [
+        "DEP"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "DEP-01",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEP-01** Productie-dependencies minimaal houden. Elke nieuwe dependency in de README\n  vermelden, met de reden."
+        },
+        {
+            "type": "rule",
+            "id": "DEP-02",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEP-02** `vendor/` met alleen productie-dependencies (`composer install --no-dev -o`) gaat\n  mee in de zip; dat doet `ps-module build`."
+        },
+        {
+            "type": "rule",
+            "id": "DEP-03",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEP-03** Let op dubbele libraries: als meerdere modules hetzelfde package meeleveren,\n  laadt PHP de versie van de module die als eerste laadt. Gebruik dus versie-constraints die\n  breed compatibel zijn (`^1.2`), en zet de package-versies van je modules gelijk."
+        },
+        {
+            "type": "rule",
+            "id": "DEP-04",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEP-04** `composer.lock` gaat in git, zodat builds reproduceerbaar zijn."
+        },
+        {
+            "type": "rule",
+            "id": "DEP-05",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEP-05** Zonder `composer.lock` lost Composer ook `require-dev` op, zelfs met `--no-dev`;\n  onstabiele dev-tools (`dev-main`) breken dan de build. `ps-module build` laat `require-dev` weg als\n  er geen lock is, maar commit de lock liever wel (DEP-04)."
+        },
+        {
+            "type": "rule",
+            "id": "DEP-06",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **DEP-06** De module downloadt na installatie niets (geen JS/CSS/fonts van een CDN, geen\n  libraries of updates). Externe scripts alleen als de dienst ze vereist (betaal-SDK), en dan in\n  `header_csp.txt` (SEC-08)."
+        },
+        {
+            "type": "rule",
+            "id": "DEP-07",
+            "marker": "",
+            "stages": [
+                "research",
+                "build"
+            ],
+            "checks": [
+                "tool:build"
+            ],
+            "markdown": "- **DEP-07** Runtime-dependencies worden in de release-zip gescoped (PKG-11; `ps-module build` scoopt elk meegeleverd\n  package vanzelf), of de module heeft er\n  geen. Vertrouw nooit op de kopie van de core of van een andere module (Guzzle is weg in PS 9)."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

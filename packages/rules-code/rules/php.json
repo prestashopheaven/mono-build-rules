@@ -1,0 +1,245 @@
+{
+    "number": "5",
+    "title": "PHP-code",
+    "prefixes": [
+        "PHP"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "PHP-01",
+            "marker": "T",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **PHP-01 [T]** `declare(strict_types=1);` in alle bestanden in `src/` en `tests/`.\n  Niet in het hoofdbestand, controllers in `controllers/` en upgrade-scripts, omdat\n  PrestaShop die laadt met waarden van gemengd type."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-02",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **PHP-02 [V]** Elk PHP-bestand dat code uitvoert begint (na header en `namespace`/`use`) met\n  `if (!defined('_PS_VERSION_')) { exit; }`. Ook bestanden die alleen ge-`include`d worden\n  (`sql/install.php`, oude `translations/*.php`): de validator controleert ze los. Uitzondering: `index.php`-redirectbestanden,\n  `vendor/` en `tests/`."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-03",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **PHP-03 [V]** Elk PHP-, JS-, CSS-, TPL- en Twig-bestand begint met de licentieheader van de\n  module, in PHP als `/**`-docblock direct na `<?php` (ook in elk `index.php`; `/*` wordt\n  afgekeurd). Geen jaarbereik: \"Since YYYY\". `composer header-stamp` zet of ververst die. De gerenderde headers staan in\n  `module.spec.json` (`license_headers.php|tpl|twig`). Uitzondering: e-mailtemplates in\n  `mails/` krijgen geen header, want die zou in de e-mail terechtkomen."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-04",
+            "marker": "T",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **PHP-04 [T]** Coding standard: de PrestaShop php-cs-fixer-config (`.php-cs-fixer.dist.php`).\n  `composer cs-fix` past hem toe."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-05",
+            "marker": "T",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **PHP-05 [T]** PHPStan level 6 zonder fouten, met de PrestaShop-extensie uit php-dev-tools.\n  Geen baseline in een nieuwe module."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-06",
+            "marker": "T",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **PHP-06 [T]** De code moet werken op elke PHP-versie van `php_min` tot en met 8.5 (PS 9.1 raadt\n  PHP 8.5 aan).\n  PHPCompatibility controleert dat. Gebruik geen syntax die nieuwer is dan `php_min`."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-07",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PHP-07** Typed properties, parameter- en return-types overal in `src/`. Klassen zijn `final`,\n  tenzij ze bedoeld zijn om uit te breiden. Gebruik constructor property promotion en `readonly`\n  waar het past. Uitzonderingen: ObjectModel-properties blijven ongetypeerd (de core vult ze met\n  ruwe DB-strings en taal-arrays); Doctrine-entities zijn niet `final` (Doctrine maakt proxies)\n  en hun `$id` is `protected`."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-08",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PHP-08** Eén klasse per bestand. Geen globale functies, behalve in upgrade-scripts."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-09",
+            "marker": "T",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "tool"
+            ],
+            "markdown": "- **PHP-09 [T]** Globale klassen (PrestaShop-core zoals `Configuration`, `Db`, `Module`, en\n  PHP-klassen zoals `RuntimeException`) schrijf je in namespaced code volledig gekwalificeerd:\n  `\\Configuration::get()`. Dit dwingt de PrestaShop-cs-fixer af (`global_namespace_import`).\n  Klassen met een namespace importeer je met `use`. Override-bestanden bevatten nooit `use`."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-10",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **PHP-10 [V]** Verboden (live validatorlijst): `eval`, `exec`, `shell_exec`, `system`,\n  `passthru`, `proc_*`, `escapeshellarg`, `escapeshellcmd`, `session_start`, `hash_hmac`,\n  `mail` (→ `Mail::send`), `file_get_contents` (→ `Tools::file_get_contents`), `date_format`\n  (→ `Tools::dateFormat`), `header('Location: …')` (→ `Tools::redirect`), backticks,\n  `serialize`/`unserialize` (→ JSON). Declareer zelf nooit een methode met de naam `delete`\n  (de validator meldt `delete`). Afgeraden: `base64_decode`, `extract`, `create_function`,\n  `assert`, `global`, `die`/`exit` buiten de `_PS_VERSION_`-check."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-16",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **PHP-16 [V]** `curl_*` en `SoapClient` alleen achter een controle\n  (`function_exists`/`extension_loaded`/`class_exists`). Gebruik voor HTTP liever de Symfony\n  HttpClient van de core (zie recept `external-api`)."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-11",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **PHP-11 [V]** Geen superglobals (`$_GET`, `$_POST`, `$_COOKIE`, `$_SESSION` zijn\n  validatorfouten; vermijd ook `$_REQUEST` en `$_SERVER`). Gebruik `Tools::getValue()`, `Tools::getIsset()`, `Tools::isSubmit()`, in\n  Symfony-code het `Request`-object, en voor cookies `Context::getContext()->cookie`."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-12",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PHP-12** Valideer elke invoer met `Validate::*` of Symfony-constraints. Cast id's direct:\n  `(int) Tools::getValue('id_product')`."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-13",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PHP-13** Geen `var_dump`, `print_r`, `dump`, `dd`, `error_log` of uitgecommentarieerde code\n  in een release. Logging via `PrestaShopLogger::addLog()` (ernst met de constanten\n  `\\PrestaShopLogger::LOG_SEVERITY_LEVEL_*`, objecttype = modulenaam) of een PSR-logger-service."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-14",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PHP-14** Geen `@`-error-suppression. Vang exceptions zo specifiek mogelijk en log ze.\n  Uitzondering: in hook-traits vang je `\\Throwable` (zie HK-04), met een comment waarom."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-15",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PHP-15** Zie DOC: alles krijgt een docblock."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-17",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **PHP-17 [V]** Geen geobfusceerde of gecodeerde code (geen ionCube, geen `base64`-blobs met code)."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-18",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **PHP-18 [V]** Code, identifiers, comments en docblocks zijn Engels (de validator controleert\n  \"English comments\"). Andere talen alleen in vertaalbestanden en docs."
+        },
+        {
+            "type": "rule",
+            "id": "PHP-19",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **PHP-19** Geen relatieve paden naar de core (`../../config/config.inc.php`); gebruik\n  `_PS_ROOT_DIR_`, `_PS_MODULE_DIR_`, `_PS_CACHE_DIR_` en `$this->getLocalPath()`."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}

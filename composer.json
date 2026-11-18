@@ -1,0 +1,60 @@
+{
+    "name": "prestashopheaven/mono-build-rules",
+    "description": "The rules of the PrestaHaven Module-Factory: every convention as a registry entry with its stage and how it is checked, split per area, with the generated conventions.md and the ps-module rules command.",
+    "version": "1.0.0",
+    "type": "project",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/*",
+            "options": {
+                "symlink": true,
+                "versions": {
+                    "prestashopheaven/build-rules-code": "1.0.0",
+                    "prestashopheaven/build-rules-content": "1.0.0",
+                    "prestashopheaven/build-rules-core": "1.0.0",
+                    "prestashopheaven/build-rules-frontend": "1.0.0",
+                    "prestashopheaven/build-rules-process": "1.0.0",
+                    "prestashopheaven/build-rules-quality": "1.0.0"
+                }
+            }
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "prestashopheaven/build-rules-code": "*",
+        "prestashopheaven/build-rules-content": "*",
+        "prestashopheaven/build-rules-core": "*",
+        "prestashopheaven/build-rules-frontend": "*",
+        "prestashopheaven/build-rules-process": "*",
+        "prestashopheaven/build-rules-quality": "*"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
+        "phpcompatibility/php-compatibility": "^10.0@alpha",
+        "prestashopheaven/build-tools": "^1.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "platform": {
+            "php": "8.1.0"
+        },
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "extra": {
+        "prestashopheaven": {
+            "monorepo": {
+                "kind": "build",
+                "category": "rules"
+            }
+        }
+    },
+    "scripts": {
+        "check": "ps-module mono check"
+    }
+}

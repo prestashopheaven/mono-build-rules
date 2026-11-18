@@ -1,0 +1,89 @@
+{
+    "number": "2",
+    "title": "Hoofdklasse",
+    "prefixes": [
+        "MOD"
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "markdown": ""
+        },
+        {
+            "type": "rule",
+            "id": "MOD-01",
+            "marker": "T",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "tool:conventions"
+            ],
+            "markdown": "- **MOD-01 [T]** Het hoofdbestand `<module>.php` is een schoon bestand: de klasse bevat\n  alleen `use`-regels voor traits en de constructor. Geen andere methodes, properties of\n  constanten. Standaardgedrag komt uit `use ModuleBase;` (package `prestashopheaven/runtime-kit`:\n  install, uninstall, tabs, vertalingen), de koppeling met de definitie uit\n  `use Definition;` (`src/Module/Helper/Definition.php`), hooks uit traits in `src/Module/Hook/`\n  en overige methodes (`getContent`, widgets, …) uit traits in `src/Module/Helper/`.\n  `ps-module conventions` controleert dit."
+        },
+        {
+            "type": "rule",
+            "id": "MOD-02",
+            "marker": "V",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "validator"
+            ],
+            "markdown": "- **MOD-02 [V]** Constructor zet: `name`, `tab` (alleen waarden uit de validatorlijst, zie\n  `interview.md`), `version` (precies `X.Y.Z`), `author`, `need_instance = 0`,\n  `ps_versions_compliancy` (min uit het interview; max een letterlijke versie, zonder maximum\n  `'<nieuwste major>.99.99'`, bijv. `'9.99.99'`; **nooit `_PS_VERSION_`**, dat keuren de\n  Addons-standaarden af), `bootstrap = true`, `multistoreCompatibility` (MS-01), daarna\n  `parent::__construct()`, daarna `displayName`, `description` en `confirmUninstall` via\n  `$this->trans()`. Alle waarden zijn letterlijk (geen constanten of concatenatie): de validator\n  leest ze statisch."
+        },
+        {
+            "type": "rule",
+            "id": "MOD-03",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MOD-03** `install()` en `uninstall()` komen uit `ModuleBase` en worden niet overschreven:\n  eerst `parent::install()`/`parent::uninstall()`, daarna `Installer`/`Uninstaller` uit\n  runtime-kit. Fouten komen in `$this->_errors`, zodat de backoffice ze toont. Is er iets extra's\n  nodig bij installatie, voeg het dan toe aan runtime-kit (zodat alle modules het krijgen) of\n  bespreek het eerst."
+        },
+        {
+            "type": "rule",
+            "id": "MOD-04",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MOD-04** `require_once __DIR__ . '/vendor/autoload.php';` direct na de `_PS_VERSION_`-check.\n  `composer.json` heeft `\"config\": {\"prepend-autoloader\": false, \"optimize-autoloader\": true}`,\n  zodat de autoloader van de module niet vóór die van PrestaShop komt."
+        },
+        {
+            "type": "rule",
+            "id": "MOD-05",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MOD-05** Versie in `$this->version` = versie in `CHANGELOG.md` = de release-tag.\n  Semver: patch voor fixes, minor voor features, major voor breaking changes."
+        },
+        {
+            "type": "rule",
+            "id": "MOD-06",
+            "marker": "",
+            "stages": [
+                "build"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **MOD-06** `distribution: addons`: na de eerste inzending staat de key uit het Seller-account in\n  `module.spec.json > module_key`, **niet** in de broncode. `ps-module build` zet hem alleen in de Addons-build\n  (`dist/addons/<module>.zip`, `$this->module_key = '<key>';` vóór `parent::__construct()`); de directe build houdt\n  `module_key` leeg (UPD-02), anders ziet de PrestaHaven Updater een direct gekochte kopie als Addons-kopie."
+        },
+        {
+            "type": "text",
+            "markdown": ""
+        }
+    ]
+}
