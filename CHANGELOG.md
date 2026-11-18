@@ -2,6 +2,10 @@
 
 All packages of this monorepo share one version. Per package details: its own `CHANGELOG.md`.
 
+## 1.1.1
+
+- `build-rules-process`: REL-08 without the Addons step (the Addons upload and the Cloudflare purge are manual).
+
 ## 1.1.0
 
 - `build-rules-core`: the stage order is intake, research, design, build, content, verify, release, retro (content

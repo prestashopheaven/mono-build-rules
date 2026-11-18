@@ -1,7 +1,7 @@
 {
     "name": "prestashopheaven/mono-build-rules",
     "description": "The rules of the PrestaHaven Module-Factory: every convention as a registry entry with its stage and how it is checked, split per area, with the generated conventions.md and the ps-module rules command.",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "type": "project",
     "license": "MIT",
     "repositories": [
@@ -11,12 +11,12 @@
             "options": {
                 "symlink": true,
                 "versions": {
-                    "prestashopheaven/build-rules-code": "1.1.0",
-                    "prestashopheaven/build-rules-content": "1.1.0",
-                    "prestashopheaven/build-rules-core": "1.1.0",
-                    "prestashopheaven/build-rules-frontend": "1.1.0",
-                    "prestashopheaven/build-rules-process": "1.1.0",
-                    "prestashopheaven/build-rules-quality": "1.1.0"
+                    "prestashopheaven/build-rules-code": "1.1.1",
+                    "prestashopheaven/build-rules-content": "1.1.1",
+                    "prestashopheaven/build-rules-core": "1.1.1",
+                    "prestashopheaven/build-rules-frontend": "1.1.1",
+                    "prestashopheaven/build-rules-process": "1.1.1",
+                    "prestashopheaven/build-rules-quality": "1.1.1"
                 }
             }
         }
