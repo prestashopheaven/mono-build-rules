@@ -2,6 +2,10 @@
 
 The version is the one of the monorepo `mono-build-rules`.
 
+## 1.2.0
+
+- TPL-30: no selectors on classes made from translated texts, such as grid row links (Cart Journey 1.4.0).
+
 ## 1.1.1
 
 - No changes (the version of the monorepo).

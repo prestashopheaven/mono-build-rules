@@ -347,6 +347,20 @@
             "markdown": "- **TPL-29** Een module zet nooit code in de build of de bestanden van het thema: thema's worden zonder bronnen\n  geleverd en zijn van de winkelier. Front-JS is een eigen bundel via `actionFrontControllerSetMedia` (of\n  `setMedia()` van een eigen front-controller) die de runtime-API gebruikt: `prestashop.on()`/`emit()`,\n  `prestashop.selectors`, en alleen als ze bestaan `prestashop.themeSelectors` (Classic) en `window.Theme`\n  (Hummingbird). Een thema kan het bestand vervangen in `themes/<thema>/modules/<module>/views/js/`."
         },
         {
+            "type": "rule",
+            "id": "TPL-30",
+            "marker": "",
+            "stages": [
+                "design",
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TPL-30** Selecteer nooit op klassen die PrestaShop uit vertaalde teksten maakt, zoals de rij-link van een grid\n  (`grid-<naam>-row-link`, gemaakt uit de vertaalde actienaam): die werken alleen in het Engels. Selecteer op de `href`,\n  een `data-`-attribuut of de grid-id (`#<grid>_grid ...`), en controleer de backoffice één keer in een tweede taal\n  (verify). Gevonden in heavencartjourney 1.4.0."
+        },
+        {
             "type": "text",
             "markdown": ""
         }

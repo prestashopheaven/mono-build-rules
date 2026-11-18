@@ -2,6 +2,10 @@
 
 The version is the one of the monorepo `mono-build-rules`.
 
+## 1.2.0
+
+- No changes (the version of the monorepo).
+
 ## 1.1.1
 
 - REL-08: no Addons step in the publish checklist (manual, 2026-11-18).

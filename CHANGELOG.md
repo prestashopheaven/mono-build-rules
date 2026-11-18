@@ -2,6 +2,10 @@
 
 All packages of this monorepo share one version. Per package details: its own `CHANGELOG.md`.
 
+## 1.2.0
+
+- `build-rules-frontend`: TPL-30, never select on classes PrestaShop builds from translated texts (grid row links).
+
 ## 1.1.1
 
 - `build-rules-process`: REL-08 without the Addons step (the Addons upload and the Cloudflare purge are manual).
