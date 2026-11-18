@@ -26,7 +26,7 @@ final class Stages
     public const ALL = 'all';
 
     /** The stages in pipeline order. */
-    public const ORDER = ['intake', 'research', 'design', 'build', 'verify', 'content', 'release', 'retro'];
+    public const ORDER = ['intake', 'research', 'design', 'build', 'content', 'verify', 'release', 'retro'];
 
     /**
      * Whether $stage is a stage of the pipeline or "all".
