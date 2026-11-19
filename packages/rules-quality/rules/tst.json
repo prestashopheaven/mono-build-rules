@@ -192,6 +192,19 @@
             "markdown": "- **TST-14** Een testobject met winkelkoppeling (taal, carrier, …) verwijder je in multistore voor **alle** winkels:\n  `\\Shop::setContext(\\Shop::CONTEXT_ALL)` en `$object->id_shop_list = <alle winkel-id's>` vóór `delete()`.\n  `ObjectModel::delete()` haalt anders alleen de winkels van de context weg en houdt het object zolang een andere winkel\n  het heeft (`Language::delete()` ruimt zelfs alleen in `CONTEXT_ALL` op). Gevonden in `heavenlangimages` (2026-10-24):\n  de testtaal bleef actief in winkel 2 en 3, hun homepage stuurde door naar `/<winkel>/en/` (302) en de\n  multistore-controle \"front office shows the value of its own shop\" faalde."
         },
         {
+            "type": "rule",
+            "id": "TST-15",
+            "marker": "",
+            "stages": [
+                "build",
+                "verify"
+            ],
+            "checks": [
+                "review"
+            ],
+            "markdown": "- **TST-15** De testwinkels draaien op localhost, een host die nooit publiek is: een module die URL's naar buiten\n  stuurt (IndexNow, een feed, een sitemap-ping) slaat ze daar terecht over. Een integratietest van verzend- of\n  wachtrijgedrag op de eigen URL's van de testwinkel bewijst dus niets. Zet de URL's op een publiek voorbeeldhost met\n  `PrestaShopHeaven\\Build\\TestingPhp\\PublicHost` (`url()`, `urls()`; `www.example.org`) en controleer wat er verstuurd\n  wordt (met een opnemende client, nooit een echte aanroep), of houd de eigen host en controleer dat hij wordt\n  overgeslagen. Gevonden in `heavenbingindexnow` 1.0.0 (2026-11-18): meerdere tests slaagden vanzelf."
+        },
+        {
             "type": "text",
             "markdown": "\nJavaScript en TypeScript (TST-20..29, uitwerking van TST-11; uitzondering voor derden: TST-27):\n"
         },
